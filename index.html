@@ -1398,41 +1398,41 @@
         </article>
 
         <article class="proj reveal tilt">
-          <div class="proj-top"><span class="proj-num">03</span><h3>DoremanAI</h3><span class="proj-kind is-apk"><i class="dot"></i>ANDROID · DEBUG APK</span></div>
+          <div class="proj-top"><span class="proj-num">03</span><h3>DoremanAI</h3><span class="proj-kind is-apk"><i class="dot"></i>ANDROID · SIGNED RELEASE</span></div>
           <p>A Siri-style, voice-controlled personal assistant for Android — talk to it and it acts: calls, messages, answers and everyday tasks, powered by AI gateways.</p>
-          <p class="note">Current build is a debug APK only — not a signed release build.</p>
+          <p class="note">Current build is a signed release build.</p>
           <div class="tags"><span>Kotlin</span><span>Jetpack Compose</span><span>Voice</span><span>AI</span></div>
           <details class="case">
             <summary>Case study — problem, build &amp; outcome</summary>
             <dl class="case-rows">
               <div class="case-row"><dt>Problem</dt><dd>Everyday phone tasks — calling, messaging, quick answers — mean tapping through apps; a voice-first assistant can do them hands-free.</dd></div>
               <div class="case-row"><dt>Built</dt><dd>Kotlin + Jetpack Compose: common voice commands are handled on-device first, and open questions go to AI gateways the user configures with their own keys.</dd></div>
-              <div class="case-row"><dt>Outcome</dt><dd>Distributed as a debug APK through the GitHub releases page — labelled honestly as a debug build, not a signed release.</dd></div>
+              <div class="case-row"><dt>Outcome</dt><dd>Distributed as a signed release through the GitHub releases page.</dd></div>
               <div class="case-row"><dt>Why this stack</dt><dd>Kotlin + Jetpack Compose, native Android — the assistant's jobs are phone jobs, like calls and messages, so it is built as a native app rather than a web page in a wrapper.</dd></div>
               <div class="case-row"><dt>Hard part</dt><dd>Routing each request to the right place: simple commands should be handled instantly on the phone itself, while open questions need AI. Common voice commands are handled on-device first, and only open questions go out to the AI gateway.</dd></div>
-              <div class="case-row"><dt>Trade-off</dt><dd>Open questions run through a gateway the user configures with their own key — more setup than a built-in account, but the key and the choice of gateway stay the user's. And for now it ships as a debug APK only, not a signed release.</dd></div>
+              <div class="case-row"><dt>Trade-off</dt><dd>Open questions run through a gateway the user configures with their own key — more setup than a built-in account, but the key and the choice of gateway stay the user's.</dd></div>
             </dl>
           </details>
           <div class="proj-links">
-            <a class="primary" href="https://github.com/asmitsr/DoremanAI/releases/tag/latest-apk" target="_blank" rel="noopener">Download APK ↓</a>
+            <a class="primary" href="https://github.com/asmitsr/DoremanAI/releases/tag/latest-release-apk" target="_blank" rel="noopener">Download APK ↓</a>
             <a href="https://github.com/asmitsr/DoremanAI" target="_blank" rel="noopener">Source Code ↗</a>
           </div>
         </article>
 
         <article class="proj reveal tilt">
-          <div class="proj-top"><span class="proj-num">04</span><h3>SUST OR DIE</h3><span class="proj-kind is-apk"><i class="dot"></i>ANDROID · DEBUG APK</span></div>
+          <div class="proj-top"><span class="proj-num">04</span><h3>SUST OR DIE</h3><span class="proj-kind is-apk"><i class="dot"></i>ANDROID · SIGNED RELEASE</span></div>
           <p>My personal study-planner app: a 60-day study plan with syllabus tracking, Focus Mode, custom alarms and deadline countdowns.</p>
-          <p class="note">Public debug-APK download — the source code stays private.</p>
+          <p class="note">Public signed-release APK download — the source code stays private.</p>
           <div class="tags"><span>Kotlin</span><span>Jetpack Compose</span><span>Study planner</span></div>
           <details class="case">
             <summary>Case study — problem, build &amp; outcome</summary>
             <dl class="case-rows">
               <div class="case-row"><dt>Problem</dt><dd>My own study routine needed one place for the plan, the syllabus and the deadlines — scattered notes were not working.</dd></div>
               <div class="case-row"><dt>Built</dt><dd>Kotlin + Jetpack Compose: a 60-day study plan with syllabus tracking, Focus Mode, custom alarms, deadline countdowns and an offline routine tab.</dd></div>
-              <div class="case-row"><dt>Outcome</dt><dd>Shared as a public debug-APK download (11.2 MB) — the app is public, the source code stays private.</dd></div>
+              <div class="case-row"><dt>Outcome</dt><dd>Shared as a public signed-release APK download (7.93 MB) — the app is public, the source code stays private.</dd></div>
               <div class="case-row"><dt>Why this stack</dt><dd>Kotlin + Jetpack Compose, native Android — this is a personal app that lives on my phone all day, with custom alarms and an offline routine tab, so native is the natural fit.</dd></div>
               <div class="case-row"><dt>Hard part</dt><dd>Fitting a whole study routine into one place without it scattering again: the 60-day plan, syllabus tracking, Focus Mode, custom alarms and deadline countdowns all had to work together as one app built around my own routine.</dd></div>
-              <div class="case-row"><dt>Trade-off</dt><dd>It is built for one person's routine — mine — so it fits my plan exactly instead of trying to fit everyone. It is shared as a public debug-APK download, and the source code stays private.</dd></div>
+              <div class="case-row"><dt>Trade-off</dt><dd>It is built for one person's routine — mine — so it fits my plan exactly instead of trying to fit everyone. It is shared as a public signed-release APK download, and the source code stays private.</dd></div>
             </dl>
           </details>
           <div class="proj-links">
