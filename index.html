@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="white">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -663,6 +663,13 @@
 
   /* terminal */
   .term{
+    /* the terminal window stays dark in every theme, so its text colours are
+       pinned to the dark-theme (Navy) values — page theme changes never
+       reach inside it, and the output stays readable in all three themes */
+    --text:#FFFFFF;--text-soft:#B4C0D2;--muted:#8B9BB1;--faint:#8496AC;
+    --accent:#D9BE78;--accent-soft:#E4CB87;--accent-dim:rgba(217,190,120,.10);
+    --line:#35445A;--line-strong:rgba(217,190,120,.45);
+    color:var(--text);
     border:1px solid var(--line-strong);border-radius:16px;overflow:hidden;
     background:var(--code-bg);box-shadow:0 1px 2px rgba(0,0,0,.4),0 30px 60px rgba(0,0,0,.45);
   }
@@ -741,6 +748,25 @@
   .mf-send{margin-top:16px;width:100%;font-weight:700}
   .mf-note{margin:12px 0 0;font-size:13px;color:var(--faint)}
   @media (max-width:860px){ .contact-cards{grid-template-columns:1fr} .mf-grid{grid-template-columns:1fr} }
+
+  /* achievements — issuer rows that open the certificate viewer page */
+  .ach-list{display:grid;gap:12px}
+  .ach-row{
+    display:flex;align-items:center;gap:16px;text-decoration:none;
+    border:1px solid var(--line);border-radius:var(--radius);
+    padding:20px 22px;
+    background:linear-gradient(180deg,var(--panel2),var(--panel));
+    box-shadow:0 1px 2px rgba(0,0,0,.32),0 12px 26px rgba(0,0,0,.20);
+    transition:border-color .25s ease,background-color .25s ease,box-shadow .45s var(--ease);
+  }
+  .ach-row:hover,.ach-row:focus-visible{border-color:var(--accent);background:var(--accent-dim);box-shadow:0 2px 3px rgba(0,0,0,.38),0 18px 36px rgba(0,0,0,.28)}
+  .ach-name{font-family:var(--font-head);font-weight:700;font-size:clamp(19px,2.2vw,23px);line-height:1.2}
+  .ach-hint{margin-left:auto;flex:none;font-family:var(--font-mono);font-size:12.5px;font-weight:500;letter-spacing:.08em;color:var(--muted);white-space:nowrap;transition:color .25s ease}
+  .ach-row:hover .ach-hint,.ach-row:focus-visible .ach-hint{color:var(--accent-soft)}
+  @media (max-width:620px){
+    .ach-row{padding:17px 16px;gap:12px}
+    .ach-hint{font-size:11.5px}
+  }
 
   footer{margin-top:84px;border-top:1px solid var(--line);padding:22px 0 34px}
   .foot-in{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:13.5px;color:var(--faint)}
@@ -921,13 +947,14 @@
       <a href="#workflow">Workflow</a>
       <a href="#terminal">Terminal</a>
       <a href="#contact">Contact</a>
+      <a href="#achievements">Achievements</a>
     </nav>
     <span class="spacer"></span>
     <button class="palette-btn" type="button" id="palette-open" aria-label="Open command palette">
       <svg class="pb-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg><span class="pb-text">Search / commands</span><kbd>Ctrl</kbd><kbd>K</kbd>
     </button>
     <button class="theme-btn" type="button" id="theme-btn" aria-label="Colour theme — tap to switch between Midnight Navy, White and Black">
-      <span class="theme-dot" aria-hidden="true"></span><span id="theme-name">Navy</span>
+      <span class="theme-dot" aria-hidden="true"></span><span id="theme-name">White</span>
     </button>
     <a class="nav-gh" href="https://github.com/asmitsr" target="_blank" rel="noopener">GitHub ↗</a>
     <button class="menu-btn" type="button" id="menu-btn" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
@@ -942,6 +969,7 @@
     <a href="#workflow">Workflow</a>
     <a href="#terminal">Terminal</a>
     <a href="#contact">Contact</a>
+    <a href="#achievements">Achievements</a>
   </nav>
 </header>
 
@@ -1406,6 +1434,31 @@
           <button class="btn primary mf-send" type="submit">Send Message</button>
           <p class="mf-note">This opens your email app with the message addressed to asmitsr.official@gmail.com — nothing is sent from this page itself.</p>
         </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ACHIEVEMENTS ================= -->
+  <section class="section" id="achievements">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="sec-idx">07 /</span>
+        <h2>Achievements</h2>
+        <p>Certificates I have earned — tap an issuer to view the certificate.</p>
+      </div>
+      <div class="ach-list reveal">
+        <a class="ach-row" href="/certificates.html?cert=sql">
+          <span class="ach-name">Cognitive Class · IBM Skills Network</span>
+          <span class="ach-hint">View certificate →</span>
+        </a>
+        <a class="ach-row" href="/certificates.html?cert=deloitte">
+          <span class="ach-name">Deloitte</span>
+          <span class="ach-hint">View certificate →</span>
+        </a>
+        <a class="ach-row" href="/certificates.html?cert=hubspot">
+          <span class="ach-name">HubSpot Academy</span>
+          <span class="ach-hint">View certificate →</span>
+        </a>
       </div>
     </div>
   </section>
@@ -2059,7 +2112,9 @@
     if(!cmd) return;
     history.unshift(cmd); histIdx = -1;
     var key = cmd.toLowerCase().split(/\s+/)[0];
-    if(COMMANDS[key]){ COMMANDS[key](); }
+    var phrase = cmd.toLowerCase().replace(/\s+/g, " ").replace(/\?+$/, "").trim();
+    if(phrase === "who is asmit" || phrase === "whoami"){ COMMANDS.about(); }
+    else if(COMMANDS[key]){ COMMANDS[key](); }
     else { print("command not found: " + key + " — type 'help' for the list.", "dim"); }
   }
   if(termForm && termInput && termBody){
@@ -2138,7 +2193,7 @@
     document.documentElement.setAttribute("data-theme", themeOrder[i]);
     if(themeName) themeName.textContent = themeLabels[themeOrder[i]];
   }
-  setTheme("navy");
+  setTheme("white");
   if(themeBtn) themeBtn.addEventListener("click", function(){
     setTheme(themeOrder[(themeIdx + 1) % themeOrder.length]);
   });
@@ -2185,7 +2240,7 @@
         if(e.isIntersecting) setActiveNav(e.target.id);
       });
     }, { rootMargin: "-38% 0px -55% 0px" });
-    ["about","skills","projects","architecture","workflow","terminal","contact"].forEach(function(id){
+    ["about","skills","projects","architecture","workflow","terminal","contact","achievements"].forEach(function(id){
       var s = document.getElementById(id);
       if(s) spy.observe(s);
     });
@@ -2208,6 +2263,7 @@
     { k: "GO", label: "Workflow", hint: "#workflow", run: function(){ go("#workflow"); } },
     { k: "GO", label: "Terminal", hint: "#terminal", run: function(){ go("#terminal"); setTimeout(function(){ if(termInput) termInput.focus({ preventScroll: true }); }, 450); } },
     { k: "GO", label: "Contact", hint: "#contact", run: function(){ go("#contact"); } },
+    { k: "GO", label: "Achievements", hint: "#achievements", run: function(){ go("#achievements"); } },
     { k: "OPEN", label: "GitHub — @asmitsr", hint: "github.com", run: function(){ window.open("https://github.com/asmitsr", "_blank", "noopener"); } },
     { k: "OPEN", label: "Email — asmitsr.official@gmail.com", hint: "mailto", run: function(){ window.location.href = "mailto:asmitsr.official@gmail.com"; } },
     { k: "OPEN", label: "WhatsApp — +880 1540752303", hint: "wa.me", run: function(){ window.open("https://wa.me/8801540752303", "_blank", "noopener"); } },
