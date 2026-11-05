@@ -682,10 +682,19 @@
   .case summary::after{content:"+";margin-left:8px;color:var(--accent)}
   .case[open ] summary::after{content:"–"}
   .case-rows{display:grid;gap:9px;margin-top:11px}
-  .case-row{display:grid;grid-template-columns:92px minmax(0,1fr);gap:10px}
+  .case-row{display:grid;grid-template-columns:118px minmax(0,1fr);gap:10px}
   .case-row dt{font-family:var(--font-mono);font-size:10.5px;font-weight:500;letter-spacing:.13em;color:var(--faint);text-transform:uppercase;padding-top:3px}
   .case-row dd{margin:0;font-size:14px;line-height:1.6;color:var(--muted)}
-  @media (max-width:620px){ .case-row{grid-template-columns:76px minmax(0,1fr)} }
+  @media (max-width:620px){ .case-row{grid-template-columns:96px minmax(0,1fr)} }
+  /* verified-proof strip on the featured cards — checked facts, no badges */
+  .proj .note.verified{border-style:solid;font-weight:600;color:var(--text)}
+  /* skill → project evidence line */
+  .skill .used{margin:6px 0 0;font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;color:var(--faint)}
+  .skill .used b{color:var(--accent-soft);font-weight:500}
+  /* how-this-site note, after Achievements */
+  .site-note{border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(180deg,var(--panel2),var(--panel));padding:20px 22px}
+  .site-note h2{margin:0 0 6px;font-family:var(--font-head);font-weight:700;font-size:19px}
+  .site-note p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.65;max-width:78ch}
 
   /* showcase banner — the very first item of the projects section:
      the full showcase holds every project in one place */
@@ -1265,6 +1274,7 @@
             <div class="skill-top"><span class="skill-name">Jetpack Compose</span><span class="lvl core">CORE</span></div>
             <div class="meter" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></div>
             <p>Declarative UI for every Android app I ship.</p>
+            <p class="used">USED IN — <b>DoremanAI</b> · <b>SUST OR DIE</b></p>
           </div>
         </div>
         <div class="skill-group reveal">
@@ -1274,6 +1284,7 @@
             <div class="skill-top"><span class="skill-name">HTML / CSS / JavaScript</span><span class="lvl core">CORE</span></div>
             <div class="meter" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></div>
             <p>The base layer under everything web I make.</p>
+            <p class="used">USED IN — <b>all web projects</b>: Password Leak Checker · Expense Splitter · IELTS Pathway · Skill DNA</p>
           </div>
           <div class="skill">
             <div class="skill-top"><span class="skill-name">Next.js</span><span class="lvl strong">STRONG</span></div>
@@ -1284,11 +1295,13 @@
             <div class="skill-top"><span class="skill-name">React</span><span class="lvl strong">STRONG</span></div>
             <div class="meter" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i></div>
             <p>Component-driven UI inside my Next.js work.</p>
+            <p class="used">USED IN — <b>IELTS Pathway</b></p>
           </div>
           <div class="skill">
             <div class="skill-top"><span class="skill-name">TypeScript</span><span class="lvl strong">STRONG</span></div>
             <div class="meter" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i></div>
             <p>Typed code for my Next.js projects.</p>
+            <p class="used">USED IN — <b>IELTS Pathway</b></p>
           </div>
           <div class="skill">
             <div class="skill-top"><span class="skill-name">Tailwind CSS</span><span class="lvl strong">STRONG</span></div>
@@ -1303,11 +1316,13 @@
             <div class="skill-top"><span class="skill-name">Python + Flask</span><span class="lvl core">CORE</span></div>
             <div class="meter" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></div>
             <p>Backend of both my live web apps.</p>
+            <p class="used">USED IN — <b>Password Leak Checker</b> · <b>Expense Splitter</b></p>
           </div>
           <div class="skill">
             <div class="skill-top"><span class="skill-name">Git / GitHub</span><span class="lvl strong">STRONG</span></div>
             <div class="meter" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i></div>
             <p>Every project versioned and published here.</p>
+            <p class="used">USED IN — <b>every project</b> on this page</p>
           </div>
         </div>
       </div>
@@ -1346,6 +1361,7 @@
         <article class="proj reveal tilt featured">
           <div class="proj-top"><span class="proj-num">01</span><h3>Password Leak Checker</h3><span class="proj-flag">Featured</span><span class="proj-kind is-live"><i class="dot"></i>WEB · LIVE</span></div>
           <p>Checks whether a password or email has appeared in known data breaches, and rates password strength — the lookup never stores what you type.</p>
+          <p class="note verified">✓ Privacy by design — nothing you type into this checker is ever stored.</p>
           <div class="tags"><span>Python</span><span>Flask</span><span>Breach APIs</span></div>
           <details class="case">
             <summary>Case study — problem, build &amp; outcome</summary>
@@ -1353,6 +1369,9 @@
               <div class="case-row"><dt>Problem</dt><dd>People reuse the same password everywhere and have no quick way to tell whether it has already leaked in a breach.</dd></div>
               <div class="case-row"><dt>Built</dt><dd>A Flask backend that queries breach data through external APIs and rates password strength — nothing typed into the checker is ever stored.</dd></div>
               <div class="case-row"><dt>Outcome</dt><dd>Live and public on Vercel — anyone can run a check right now from the Open Website button below.</dd></div>
+              <div class="case-row"><dt>Why this stack</dt><dd>Python + Flask — the job is one focused lookup: take a check, ask the breach data, send the answer back. A small Flask backend does exactly that, with nothing extra in the way.</dd></div>
+              <div class="case-row"><dt>Hard part</dt><dd>The checker asks for the most sensitive thing a person can type, so it had to be useful without keeping any of it. The fix is in the design, not in a setting: nothing typed into the checker is ever stored — the check runs, the answer comes back, and nothing is written down.</dd></div>
+              <div class="case-row"><dt>Trade-off</dt><dd>Storing nothing means there is no history to go back to — every check stands on its own. That is the deliberate price of the privacy design: privacy first, convenience second.</dd></div>
             </dl>
           </details>
           <div class="proj-links">
@@ -1364,6 +1383,7 @@
         <article class="proj reveal tilt featured">
           <div class="proj-top"><span class="proj-num">02</span><h3>Expense Splitter</h3><span class="proj-flag">Featured</span><span class="proj-kind is-live"><i class="dot"></i>WEB · LIVE</span></div>
           <p>Splits group expenses fairly: create a group, add members and shared costs, and see exactly who owes whom — with 50 currencies to choose from, picked per group.</p>
+          <p class="note verified">✓ Verified test — a 900 expense split three ways settles as exactly two transfers of 300.</p>
           <div class="tags"><span>Python</span><span>Flask</span><span>SQLite</span><span>Chart.js</span></div>
           <details class="case">
             <summary>Case study — problem, build &amp; outcome</summary>
@@ -1371,6 +1391,9 @@
               <div class="case-row"><dt>Problem</dt><dd>Group trips and shared flats end in messy who-owes-whom maths that nobody wants to work out by hand.</dd></div>
               <div class="case-row"><dt>Built</dt><dd>Flask + SQLite behind it: groups, members and shared expenses, a settle-up algorithm that minimises the number of transfers, and a currency picked per group at creation from 50 Asian currencies.</dd></div>
               <div class="case-row"><dt>Outcome</dt><dd>Live on Vercel and verified end-to-end: a 900 expense split three ways settles as exactly two transfers of 300.</dd></div>
+              <div class="case-row"><dt>Why this stack</dt><dd>Python + Flask with SQLite — groups, members and expenses are structured records, and the balances are worked out on the server, so a lightweight database behind Flask covers the whole job.</dd></div>
+              <div class="case-row"><dt>Hard part</dt><dd>The settle-up algorithm: a group's balances can tangle into many possible payments, and the goal is to clear them all in as few transfers as possible. It sorts who owes against who is owed and matches them off until every balance reaches zero — the split.py snippet in the Skills section above shows the shape of it, and the verified test in the Outcome row above is it working.</dd></div>
+              <div class="case-row"><dt>Trade-off</dt><dd>Minimising transfers means the settlements don't mirror who originally spent what — someone may end up paying a person they never borrowed from directly. The choice was fewer, cleaner settlements over a payment trail that follows every single expense.</dd></div>
             </dl>
           </details>
           <div class="proj-links">
@@ -1390,6 +1413,9 @@
               <div class="case-row"><dt>Problem</dt><dd>Everyday phone tasks — calling, messaging, quick answers — mean tapping through apps; a voice-first assistant can do them hands-free.</dd></div>
               <div class="case-row"><dt>Built</dt><dd>Kotlin + Jetpack Compose: common voice commands are handled on-device first, and open questions go to AI gateways the user configures with their own keys.</dd></div>
               <div class="case-row"><dt>Outcome</dt><dd>Distributed as a debug APK through the GitHub releases page — labelled honestly as a debug build, not a signed release.</dd></div>
+              <div class="case-row"><dt>Why this stack</dt><dd>Kotlin + Jetpack Compose, native Android — the assistant's jobs are phone jobs, like calls and messages, so it is built as a native app rather than a web page in a wrapper.</dd></div>
+              <div class="case-row"><dt>Hard part</dt><dd>Routing each request to the right place: simple commands should be handled instantly on the phone itself, while open questions need AI. Common voice commands are handled on-device first, and only open questions go out to the AI gateway.</dd></div>
+              <div class="case-row"><dt>Trade-off</dt><dd>Open questions run through a gateway the user configures with their own key — more setup than a built-in account, but the key and the choice of gateway stay the user's. And for now it ships as a debug APK only, not a signed release.</dd></div>
             </dl>
           </details>
           <div class="proj-links">
@@ -1409,6 +1435,9 @@
               <div class="case-row"><dt>Problem</dt><dd>My own study routine needed one place for the plan, the syllabus and the deadlines — scattered notes were not working.</dd></div>
               <div class="case-row"><dt>Built</dt><dd>Kotlin + Jetpack Compose: a 60-day study plan with syllabus tracking, Focus Mode, custom alarms, deadline countdowns and an offline routine tab.</dd></div>
               <div class="case-row"><dt>Outcome</dt><dd>Shared as a public debug-APK download (11.2 MB) — the app is public, the source code stays private.</dd></div>
+              <div class="case-row"><dt>Why this stack</dt><dd>Kotlin + Jetpack Compose, native Android — this is a personal app that lives on my phone all day, with custom alarms and an offline routine tab, so native is the natural fit.</dd></div>
+              <div class="case-row"><dt>Hard part</dt><dd>Fitting a whole study routine into one place without it scattering again: the 60-day plan, syllabus tracking, Focus Mode, custom alarms and deadline countdowns all had to work together as one app built around my own routine.</dd></div>
+              <div class="case-row"><dt>Trade-off</dt><dd>It is built for one person's routine — mine — so it fits my plan exactly instead of trying to fit everyone. It is shared as a public debug-APK download, and the source code stays private.</dd></div>
             </dl>
           </details>
           <div class="proj-links">
@@ -1426,6 +1455,9 @@
               <div class="case-row"><dt>Problem</dt><dd>IELTS prep is usually a pile of disconnected resources — no day-by-day path that also schedules the revision.</dd></div>
               <div class="case-row"><dt>Built</dt><dd>Next.js + TypeScript: a 60-day, 10-hour-a-day plan targeting Band 7 with spaced revision built in, in Bengali and English, with dark and light themes.</dd></div>
               <div class="case-row"><dt>Outcome</dt><dd>Live and public on Vercel — the full 60-day plan is open to anyone from the Open Website button below.</dd></div>
+              <div class="case-row"><dt>Why this stack</dt><dd>Next.js + TypeScript — the plan is 60 days of structured content in two languages; TypeScript keeps that plan data typed and consistent, and Next.js serves it as a web app anyone can open.</dd></div>
+              <div class="case-row"><dt>Hard part</dt><dd>A day-by-day path alone isn't enough — revision has to be scheduled too, or it never happens. Spaced revision is built into the 60-day plan itself rather than bolted on, and the whole plan runs in both Bengali and English.</dd></div>
+              <div class="case-row"><dt>Trade-off</dt><dd>One fixed path — 60 days, 10 hours a day, aimed at Band 7. The structure that makes the plan followable also makes it demanding, and one size has to fit everyone who follows it.</dd></div>
             </dl>
           </details>
           <div class="proj-links">
@@ -1444,6 +1476,9 @@
               <div class="case-row"><dt>Problem</dt><dd>Recruiters see claimed skills, not proof — a GitHub profile holds the proof, but it is hard to read at a glance.</dd></div>
               <div class="case-row"><dt>Built</dt><dd>A web analyzer on the GitHub API that turns a public profile into a clear, readable summary of what someone has actually built.</dd></div>
               <div class="case-row"><dt>Outcome</dt><dd>Live and public on Vercel — open it from the Open Website button below.</dd></div>
+              <div class="case-row"><dt>Why this stack</dt><dd>Built on the GitHub API — the proof of what someone has built already lives in their public profile, so the analyzer reads that public data instead of asking anyone to type in a list of claimed skills.</dd></div>
+              <div class="case-row"><dt>Hard part</dt><dd>A raw GitHub profile is hard to read at a glance. The work was turning it into a clear, readable summary of what someone has actually built — skill proof a recruiter can scan in seconds.</dd></div>
+              <div class="case-row"><dt>Trade-off</dt><dd>It can only show what is public — private work never appears in it, so the picture it gives is only as complete as the public profile behind it.</dd></div>
             </dl>
           </details>
           <div class="proj-links">
@@ -1623,6 +1658,16 @@
           <span class="ach-name">HubSpot Academy</span>
           <span class="ach-hint">View certificate →</span>
         </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= HOW THIS SITE IS BUILT ================= -->
+  <section class="section" id="site-build">
+    <div class="wrap">
+      <div class="site-note reveal">
+        <h2>How this site is built</h2>
+        <p>This portfolio is a single, self-contained page — no framework, no backend and no tracking. The contact form sends nothing from this page: it opens your own email app with the message addressed to me, and pressing send stays in your hands.</p>
       </div>
     </div>
   </section>
