@@ -1854,7 +1854,7 @@
   function q(sel, root){ return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
 
   /* mark every block the agent will "build", and every line it will type */
-  q(".hero-word,#cutout-wrap,.hello,.hero-role,.hero-sub,.hero-ctas,.hero-stats,.marquee,.sec-head,.about-copy,.about-stats,.code-card,.skill-group,.proj,.arch,.wf-words,.wf-step,.term,.term-chips,.contact-box,.ccard,.msg-form").forEach(function(el){ el.classList.add("bd"); });
+  q(".hero-word,#cutout-wrap,.hello,.hero-role,.hero-sub,.hero-ctas,.hero-stats,.marquee,.sec-head,.about-copy,.about-stats,.code-card,.skill-group,.proj,.arch,.wf-words,.wf-step,.term,.term-chips,.contact-box,.ccard,.msg-form,.ach-list,.ach-row").forEach(function(el){ el.classList.add("bd"); });
   var h1El = document.getElementById("hero-h1");
   if(h1El){ h1El.classList.add("bd"); h1El.setAttribute("data-type", ""); }
   q(".sec-head h2").forEach(function(h){ h.setAttribute("data-type", ""); });
@@ -2016,7 +2016,8 @@
     { label: "Architecture", root: document.getElementById("architecture") },
     { label: "Workflow", root: document.getElementById("workflow") },
     { label: "Terminal", root: document.getElementById("terminal") },
-    { label: "Contact", root: document.getElementById("contact") }
+    { label: "Contact", root: document.getElementById("contact") },
+    { label: "Achievements", root: document.getElementById("achievements") }
   ];
   function scrollStepTo(step){
     if(step.hero){ return smoothTo(0, 850); }
