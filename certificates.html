@@ -35,9 +35,9 @@ main{width:100%;max-width:1200px;margin:0 auto;padding:20px 16px 48px;flex:1}
 .toolbar button{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px;font-family:Inter,sans-serif;font-size:15px;font-weight:600;padding:10px 16px;cursor:pointer;min-height:44px}
 .toolbar button:hover{border-color:var(--accent)}
 .zoom-label{font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--text2);min-width:56px;text-align:center}
-.stage{position:relative;border:1px solid var(--line);border-radius:14px;background:var(--bg2);overflow:hidden;touch-action:none;min-height:320px}
-.canvas{position:relative;transform-origin:0 0;will-change:transform}
-.canvas img{display:block;width:100%;height:auto;-webkit-user-drag:none;pointer-events:none}
+.stage{position:relative;border:1px solid var(--line);border-radius:14px;background:var(--bg2);overflow:auto;touch-action:none;min-height:320px}
+.canvas{display:inline-block;position:relative;transform-origin:0 0;will-change:transform}
+.canvas img{display:block;width:auto;height:auto;max-width:none;-webkit-user-drag:none;pointer-events:none}
 .watermark{position:absolute;inset:-40%;pointer-events:none;overflow:hidden;opacity:.08;transform:rotate(-24deg);font-family:"JetBrains Mono",monospace;font-size:15px;line-height:3.2;color:#fff;white-space:nowrap}
 .shield{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;background:rgba(12,20,36,.94);z-index:5;padding:20px;cursor:pointer}
 body.shielded .shield{display:flex}
@@ -115,8 +115,8 @@ if (!CERTS[key]) {
   var img = document.getElementById("certImg");
   var label = document.getElementById("zoomLabel");
   var scale = 1, tx = 0, ty = 0, fitScale = 1;
-  function apply(){ canvas.style.transform = "translate(" + tx + "px, " + ty + "px) scale(" + scale + ")"; label.textContent = Math.abs(scale - fitScale) < 0.001 ? "Fit" : Math.round(scale / fitScale * 100) + "%"; }
-  function computeFit(){ var r = stage.getBoundingClientRect(); var iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height; fitScale = Math.min(r.width / iw, (window.innerHeight * 0.72) / ih, 1); stage.style.height = Math.max(320, Math.round(ih * fitScale)) + "px"; }
+  function apply(){ canvas.style.transform = "translate(" + tx + "px, " + ty + "px) scale(" + scale + ")"; var h = Math.round(img.naturalHeight * scale); stage.style.height = Math.max(320, Math.min(h, Math.round(window.innerHeight * 0.78))) + "px"; label.textContent = Math.abs(scale - fitScale) < 0.001 ? "Fit" : Math.round(scale * 100) + "%"; }
+  function computeFit(){ if (!img.naturalWidth || !img.naturalHeight) return; var r = stage.getBoundingClientRect(); var iw = img.naturalWidth, ih = img.naturalHeight; fitScale = Math.min(r.width / iw, (window.innerHeight * 0.72) / ih, 1); }
   function zoomTo(ns, cx, cy){ ns = Math.min(4, Math.max(0.2, ns)); var r = stage.getBoundingClientRect(); var px = (cx == null ? r.width/2 : cx - r.left), py = (cy == null ? r.height/2 : cy - r.top); var k = ns / scale; tx = px - (px - tx) * k; ty = py - (py - ty) * k; scale = ns; apply(); }
   function fit(){ computeFit(); scale = fitScale; tx = 0; ty = 0; apply(); }
   function set100(){ scale = 1; tx = 0; ty = 0; apply(); }
@@ -138,7 +138,7 @@ if (!CERTS[key]) {
   stage.addEventListener("pointerup", endPointer);
   stage.addEventListener("pointercancel", endPointer);
   img.addEventListener("load", function(){ fit(); });
-  if (img.complete) fit();
+  if (img.complete && img.naturalWidth) fit();
   window.addEventListener("resize", function(){ if (Math.abs(scale - fitScale) < 0.001) fit(); });
 
   document.addEventListener("contextmenu", function(e){ e.preventDefault(); });
