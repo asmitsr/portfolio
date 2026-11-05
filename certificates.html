@@ -35,13 +35,14 @@ main{width:100%;max-width:1200px;margin:0 auto;padding:20px 16px 48px;flex:1}
 .toolbar button{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px;font-family:Inter,sans-serif;font-size:15px;font-weight:600;padding:10px 16px;cursor:pointer;min-height:44px}
 .toolbar button:hover{border-color:var(--accent)}
 .zoom-label{font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--text2);min-width:56px;text-align:center}
-.stage{position:relative;border:1px solid var(--line);border-radius:14px;background:var(--bg2);overflow:auto;touch-action:none;min-height:320px}
-.canvas{display:inline-block;position:relative;transform-origin:0 0;will-change:transform}
-.canvas img{display:block;width:auto;height:auto;max-width:none;-webkit-user-drag:none;pointer-events:none}
-.watermark{position:absolute;inset:-40%;pointer-events:none;overflow:hidden;opacity:.08;transform:rotate(-24deg);font-family:"JetBrains Mono",monospace;font-size:15px;line-height:3.2;color:#fff;white-space:nowrap}
+.stage{position:relative;border:1px solid var(--line);border-radius:14px;background:var(--bg2);overflow:auto;min-height:320px;max-height:78vh}
+.imgwrap{position:relative;width:max-content;max-width:100%;margin:0 auto}
+.imgwrap img{display:block;height:auto;-webkit-user-drag:none;pointer-events:none}
+.watermark{position:absolute;inset:0;pointer-events:none;overflow:hidden;opacity:.08}
+.wm-text{position:absolute;inset:-50% -100%;transform:rotate(-24deg);font-family:"JetBrains Mono",monospace;font-size:15px;line-height:3.2;color:#fff;white-space:nowrap}
 .shield{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;background:rgba(12,20,36,.94);z-index:5;padding:20px;cursor:pointer}
 body.shielded .shield{display:flex}
-body.shielded .canvas{filter:blur(18px)}
+body.shielded .imgwrap{filter:blur(18px)}
 .shield p{color:var(--text2);font-size:15px;line-height:1.6;max-width:420px;margin:0}
 .shield b{color:var(--text)}
 .protect-note{margin:14px 0 0;color:var(--muted);font-size:13px;line-height:1.6}
@@ -99,9 +100,9 @@ if (!CERTS[key]) {
   + '<button id="zoom100" type="button">100%</button>'
   + '</div>'
   + '<div class="stage" id="stage">'
-  + '<div class="canvas" id="canvas">'
+  + '<div class="imgwrap" id="imgwrap">'
   + '<img id="certImg" src="' + c.img + '" alt="' + esc(c.title) + ' certificate — ' + esc(c.issuer) + '" draggable="false" />'
-  + '<div class="watermark" aria-hidden="true">' + "ASMIT SARKAR · asmitsr.vercel.app · ".repeat(40) + '</div>'
+  + '<div class="watermark" aria-hidden="true"><div class="wm-text">' + "ASMIT SARKAR · asmitsr.vercel.app · ".repeat(40) + '</div></div>'
   + '</div>'
   + '<div class="shield" id="shield"><p><b>Certificate hidden.</b><br>It is hidden while this tab is in the background. Return to the tab — or tap here — to view it again.</p></div>'
   + '</div>'
@@ -111,32 +112,20 @@ if (!CERTS[key]) {
   + '</div>';
 
   var stage = document.getElementById("stage");
-  var canvas = document.getElementById("canvas");
   var img = document.getElementById("certImg");
   var label = document.getElementById("zoomLabel");
-  var scale = 1, tx = 0, ty = 0, fitScale = 1;
-  function apply(){ canvas.style.transform = "translate(" + tx + "px, " + ty + "px) scale(" + scale + ")"; var h = Math.round(img.naturalHeight * scale); stage.style.height = Math.max(320, Math.min(h, Math.round(window.innerHeight * 0.78))) + "px"; label.textContent = Math.abs(scale - fitScale) < 0.001 ? "Fit" : Math.round(scale * 100) + "%"; }
-  function computeFit(){ if (!img.naturalWidth || !img.naturalHeight) return; var r = stage.getBoundingClientRect(); var iw = img.naturalWidth, ih = img.naturalHeight; fitScale = Math.min(r.width / iw, (window.innerHeight * 0.72) / ih, 1); }
-  function zoomTo(ns, cx, cy){ ns = Math.min(4, Math.max(0.2, ns)); var r = stage.getBoundingClientRect(); var px = (cx == null ? r.width/2 : cx - r.left), py = (cy == null ? r.height/2 : cy - r.top); var k = ns / scale; tx = px - (px - tx) * k; ty = py - (py - ty) * k; scale = ns; apply(); }
-  function fit(){ computeFit(); scale = fitScale; tx = 0; ty = 0; apply(); }
-  function set100(){ scale = 1; tx = 0; ty = 0; apply(); }
-  document.getElementById("zoomIn").onclick = function(){ zoomTo(scale * 1.4); };
-  document.getElementById("zoomOut").onclick = function(){ zoomTo(scale / 1.4); };
+  var scale = 1, fitScale = 1;
+  function clamp(v){ return Math.min(4, Math.max(0.2, v)); }
+  function render(){ if (!img.naturalWidth) return; img.style.width = Math.round(img.naturalWidth * scale) + "px"; label.textContent = Math.abs(scale - fitScale) < 0.001 ? "Fit" : Math.round(scale * 100) + "%"; }
+  function computeFit(){ if (!img.naturalWidth || !img.naturalHeight) return; var r = stage.getBoundingClientRect(); fitScale = Math.min(r.width / img.naturalWidth, (window.innerHeight * 0.72) / img.naturalHeight, 1); }
+  function fit(){ if (!img.naturalWidth) return; computeFit(); scale = fitScale; render(); stage.scrollLeft = 0; stage.scrollTop = 0; }
+  function set100(){ if (!img.naturalWidth) return; scale = 1; render(); stage.scrollLeft = 0; stage.scrollTop = 0; }
+  document.getElementById("zoomIn").onclick = function(){ scale = clamp(scale * 1.4); render(); };
+  document.getElementById("zoomOut").onclick = function(){ scale = clamp(scale / 1.4); render(); };
   document.getElementById("zoomFit").onclick = fit;
   document.getElementById("zoom100").onclick = set100;
-  stage.addEventListener("wheel", function(e){ e.preventDefault(); zoomTo(scale * (e.deltaY < 0 ? 1.15 : 1/1.15), e.clientX, e.clientY); }, { passive:false });
+  stage.addEventListener("wheel", function(e){ e.preventDefault(); scale = clamp(scale * (e.deltaY < 0 ? 1.15 : 1/1.15)); render(); }, { passive:false });
   stage.addEventListener("dblclick", function(){ Math.abs(scale - 1) < 0.01 ? fit() : set100(); });
-  var pointers = new Map(); var lastPinch = 0;
-  stage.addEventListener("pointerdown", function(e){ pointers.set(e.pointerId, {x:e.clientX, y:e.clientY}); try { stage.setPointerCapture(e.pointerId); } catch(_){} });
-  stage.addEventListener("pointermove", function(e){
-    if (!pointers.has(e.pointerId)) return;
-    var prev = pointers.get(e.pointerId); pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
-    if (pointers.size === 1) { tx += e.clientX - prev.x; ty += e.clientY - prev.y; apply(); }
-    else if (pointers.size === 2) { var pts = Array.from(pointers.values()); var d = Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y); if (lastPinch) zoomTo(scale * d / lastPinch); lastPinch = d; }
-  });
-  function endPointer(e){ pointers.delete(e.pointerId); if (pointers.size < 2) lastPinch = 0; }
-  stage.addEventListener("pointerup", endPointer);
-  stage.addEventListener("pointercancel", endPointer);
   img.addEventListener("load", function(){ fit(); });
   if (img.complete && img.naturalWidth) fit();
   window.addEventListener("resize", function(){ if (Math.abs(scale - fitScale) < 0.001) fit(); });
