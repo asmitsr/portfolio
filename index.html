@@ -72,50 +72,52 @@
     --fs-body:17px;
     --fs-btn:15px;
   }
-  /* White Mode — "Porcelain Emerald": warm porcelain surfaces, warm
-     charcoal text (no blue or blue-grey anywhere) and a deep emerald
-     accent system — its own identity, distinct from Navy's gold */
+  /* White Mode — "Cream Slate": cream editorial surfaces (#F7F4EB ground,
+     #FFFEFA cards) with a Deep Slate Blue accent system — premium, elegant
+     and professional, distinct from Navy's gold and Black's copper */
   [data-theme="white"]{
     color-scheme:light;
-    --bg:#FAF7F0;
-    --bg2:#F2EEE3;
-    --panel:#FFFFFF;
-    --panel2:#F7F3E9;
-    --line:#E0DACA;
-    --line-strong:rgba(20,104,74,.45);
-    --accent:#14684A;
-    --accent-soft:#0C5138;
-    --accent-rgb:20,104,74;
-    --accent-dim:rgba(20,104,74,.10);
+    --bg:#F7F4EB;
+    --bg2:#E8EDF4;
+    --panel:#FFFEFA;
+    --panel2:#E8EDF4;
+    --line:#DDD9CE;
+    --line-strong:rgba(52,76,112,.45);
+    --accent:#344C70;
+    --accent-soft:#263A59;
+    --accent-secondary:#627A9E;
+    --accent-rgb:52,76,112;
+    --accent-dim:rgba(52,76,112,.10);
     --on-accent:#FFFFFF;
-    --text:#211F1A;
-    --text-soft:#3E3B33;
-    --muted:#5B574C;
-    --faint:#7C7666;
-    --green:#2E7D4F;
-    --grid-line:rgba(87,80,60,.09);
-    --sheen:rgba(33,31,26,.045);
-    --sheen-strong:rgba(33,31,26,.10);
-    --nav-bg:rgba(250,247,240,.88);
-    --pill-bg:rgba(255,255,255,.96);
-    --tag-bg:rgba(255,255,255,.62);
-    --stats-bg:rgba(255,255,255,.66);
-    --overlay:rgba(28,26,20,.45);
-    --hero-top:#F4F0E2;
-    --hero-depth:rgba(20,104,74,.07);
-    --hero-shadow:0 1px 16px rgba(250,247,240,.85);
-    --word-fill:rgba(20,104,74,.05);
-    --word-stroke:rgba(20,104,74,.45);
-    --watermark:rgba(20,104,74,.15);
-    --watermark-strong:rgba(20,104,74,.32);
+    --text:#252A30;
+    --text-soft:#3E434A;
+    --muted:#77766F;
+    --faint:#8A887F;
+    --green:#344C70;
+    --grid-line:#E8E3D8;
+    --sheen:rgba(37,42,48,.045);
+    --sheen-strong:rgba(37,42,48,.10);
+    --nav-bg:rgba(247,244,235,.88);
+    --pill-bg:rgba(255,254,250,.96);
+    --tag-bg:rgba(255,254,250,.62);
+    --stats-bg:rgba(255,254,250,.66);
+    --overlay:rgba(37,42,48,.45);
+    --hero-top:#F7F4EB;
+    --hero-depth:rgba(52,76,112,.07);
+    --hero-shadow:0 1px 16px rgba(247,244,235,.85);
+    --word-fill:rgba(52,76,112,.05);
+    --word-stroke:rgba(52,76,112,.45);
+    --watermark:rgba(52,76,112,.15);
+    --watermark-strong:rgba(52,76,112,.32);
     --code-bg:#0B1322;
-    --success:#1E7A46;
+    --success:#344C70;
     --warning:#96690F;
     --error:#B44436;
+    --shadow-slate:rgba(52,76,112,0.12);
   }
   /* Black Mode — "Charcoal Copper": warm-tinted near-black surfaces,
      warm ivory text and a burnt-copper accent system — distinct from
-     both Navy's champagne gold and White's emerald */
+     both Navy's champagne gold and White's slate blue */
   [data-theme="black"]{
     color-scheme:dark;
     --bg:#0B0A09;
@@ -189,7 +191,7 @@
   /* ================= global blueprint grid + particles ================= */
   [data-theme="white"] body::before{
     background-image:
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='224' height='224'%3E%3Cpath d='M112 105v14M105 112h14' stroke='%2314684A' stroke-opacity='.16' stroke-width='1.5'/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='224' height='224'%3E%3Cpath d='M112 105v14M105 112h14' stroke='%23344C70' stroke-opacity='.16' stroke-width='1.5'/%3E%3C/svg%3E"),
       linear-gradient(var(--grid-line) 1px,transparent 1px),
       linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
   }
@@ -349,7 +351,7 @@
     width:11px;height:11px;border-radius:50%;flex:none;
     background:#101B2D;border:2px solid var(--accent);
   }
-  [data-theme="white"] .theme-dot{background:#FAF7F0}
+  [data-theme="white"] .theme-dot{background:#F7F4EB}
   [data-theme="black"] .theme-dot{background:#0B0A09}
 
   /* ================= hero ================= */
@@ -465,6 +467,40 @@
     color:var(--text);background:var(--tag-bg);letter-spacing:.16em;font-size:11px;
   }
   .tag-open .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(101,201,154,.18);flex:none}
+  /* White only — premium slate status dot: small, elegant, smooth pulse
+     with a soft slate glow (no aggressive blinking); Navy and Black keep
+     the original dot exactly as before */
+  [data-theme="white"] .tag-open .dot{
+    background:#344C70;
+    box-shadow:0 0 0 3px rgba(52,76,112,0.20),0 0 10px rgba(52,76,112,0.20);
+    animation:whiteDotPulse 2.8s ease-in-out infinite;
+  }
+  @keyframes whiteDotPulse{
+    0%,100%{transform:scale(1);box-shadow:0 0 0 3px rgba(52,76,112,0.20),0 0 8px rgba(52,76,112,0.16)}
+    50%{transform:scale(1.14);box-shadow:0 0 0 5px rgba(52,76,112,0.10),0 0 14px rgba(52,76,112,0.22)}
+  }
+  @media (prefers-reduced-motion:reduce){
+    [data-theme="white"] .tag-open .dot{animation:none}
+  }
+  [data-theme="white"] .proj-kind.is-live .dot{box-shadow:0 0 0 3px rgba(52,76,112,0.16)}
+  [data-theme="white"] .hero-plus{color:rgba(98,122,158,0.42)}
+  [data-theme="white"] .marquee-track i{color:#627A9E}
+  /* White only — soften the heavy black card shadows to the slate tint
+     rgba(52,76,112,0.12) so cards sit naturally on the cream ground;
+     layout, spacing and the other themes are untouched */
+  [data-theme="white"] .hero-stats{box-shadow:0 18px 36px rgba(52,76,112,0.12)}
+  [data-theme="white"] .about-stats,
+  [data-theme="white"] .skill-group,
+  [data-theme="white"] .fact-list li{box-shadow:0 1px 2px rgba(52,76,112,0.08),0 14px 30px rgba(52,76,112,0.12)}
+  [data-theme="white"] .proj{box-shadow:0 1px 2px rgba(52,76,112,0.08),0 10px 22px rgba(52,76,112,0.10),0 26px 48px rgba(52,76,112,0.12)}
+  [data-theme="white"] .proj:hover{box-shadow:0 2px 3px rgba(52,76,112,0.10),0 18px 34px rgba(52,76,112,0.14),0 40px 70px rgba(52,76,112,0.12)}
+  [data-theme="white"] .arch,
+  [data-theme="white"] .showcase-banner{box-shadow:0 1px 2px rgba(52,76,112,0.08),0 16px 34px rgba(52,76,112,0.12)}
+  [data-theme="white"] .contact-box{box-shadow:0 1px 2px rgba(52,76,112,0.08),0 24px 52px rgba(52,76,112,0.12)}
+  [data-theme="white"] .ccard{box-shadow:0 1px 2px rgba(52,76,112,0.08),0 12px 26px rgba(52,76,112,0.12)}
+  [data-theme="white"] .ccard:hover{box-shadow:0 2px 3px rgba(52,76,112,0.10),0 20px 38px rgba(52,76,112,0.14)}
+  [data-theme="white"] .ach-row{box-shadow:0 1px 2px rgba(52,76,112,0.08),0 12px 26px rgba(52,76,112,0.12)}
+  [data-theme="white"] .code-card{box-shadow:0 1px 2px rgba(52,76,112,0.10),0 4px 10px rgba(52,76,112,0.10),0 22px 44px rgba(52,76,112,0.12)}
   .tag-name{top:146px;right:26px;color:var(--accent-soft);font-size:13px;letter-spacing:.34em}
   .tag-loc{bottom:22px;right:26px;color:var(--faint);font-size:11px}
   /* coordinates tag dropped — location label already carries the same fact,
