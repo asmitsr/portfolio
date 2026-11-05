@@ -9,55 +9,64 @@
 <title>Asmit Sarkar — Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&family=Noto+Sans+Bengali:wght@400;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&family=Noto+Sans+Bengali:wght@400;600&display=swap" rel="stylesheet" />
 <style>
   :root{
     color-scheme:dark;
-    /* Midnight Navy — default theme */
-    --bg:#101B2D;
-    --bg2:#0B1424;
-    --panel:#192A40;
-    --panel2:#22344A;
-    --line:#344358;
-    --line-strong:rgba(198,164,106,.45);
-    --accent:#C6A46A;
-    --accent-soft:#D8BE8C;
-    --accent-dim:rgba(198,164,106,.10);
-    --on-accent:#101B2D;
-    --text:#F4F3EF;
-    --text-soft:#C9D2DE;
-    --muted:#A7B2C2;
-    --faint:#8494A9;
-    --green:#93B884;
-    --grid-line:rgba(52,67,88,.38);
-    --sheen:rgba(244,243,239,.045);
-    --sheen-strong:rgba(244,243,239,.11);
-    --nav-bg:rgba(16,27,45,.86);
-    --pill-bg:rgba(13,22,38,.95);
-    --tag-bg:rgba(16,27,45,.55);
-    --stats-bg:rgba(13,22,38,.62);
-    --overlay:rgba(6,11,20,.68);
-    --hero-top:#152238;
-    --hero-depth:rgba(34,52,74,.55);
+    /* Midnight Editorial — default theme (Stage 1 semantic tokens)
+       Page #0C1424 · Secondary #111D30 · Card #18253A · Elevated #202F46
+       Accent #D9BE78 · Accent-soft #E4CB87 · Border #35445A */
+    --bg:#0C1424;
+    --bg2:#111D30;
+    --panel:#18253A;
+    --panel2:#202F46;
+    --line:#35445A;
+    --line-strong:rgba(217,190,120,.45);
+    --accent:#D9BE78;
+    --accent-soft:#E4CB87;
+    --accent-dim:rgba(217,190,120,.10);
+    --on-accent:#0C1424;
+    --text:#FFFFFF;
+    --text-soft:#B4C0D2;
+    --muted:#8B9BB1;
+    --faint:#8496AC;
+    --green:#65C99A;
+    --success:#65C99A;
+    --warning:#F2BD68;
+    --error:#F08080;
+    --grid-line:rgba(53,68,90,.38);
+    --sheen:rgba(255,255,255,.045);
+    --sheen-strong:rgba(255,255,255,.11);
+    --nav-bg:rgba(12,20,36,.86);
+    --pill-bg:rgba(17,29,48,.95);
+    --tag-bg:rgba(12,20,36,.55);
+    --stats-bg:rgba(17,29,48,.62);
+    --overlay:rgba(5,9,17,.68);
+    --hero-top:#111D30;
+    --hero-depth:rgba(32,47,70,.55);
     --hero-shadow:0 2px 22px rgba(3,7,14,.6);
-    --word-fill:rgba(198,164,106,.07);
-    --word-stroke:rgba(198,164,106,.42);
-    --watermark:rgba(198,164,106,.14);
-    --watermark-strong:rgba(198,164,106,.32);
+    --word-fill:rgba(217,190,120,.07);
+    --word-stroke:rgba(217,190,120,.42);
+    --watermark:rgba(217,190,120,.14);
+    --watermark-strong:rgba(217,190,120,.32);
     --code-bg:#0B1322;
     --ease:cubic-bezier(.22,1,.36,1);
     --ease-io:cubic-bezier(.65,0,.35,1);
     --radius:14px;
-    /* Typography system — Editorial: Barlow Condensed · Headings/brand: Space Grotesk
-       Body/interface: Inter · Technical/code: JetBrains Mono.
+    /* Spacing scale — one rhythm for layout, sections and components */
+    --content-w:1200px;
+    --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px;
+    --sp-6:24px; --sp-7:32px; --sp-8:48px; --sp-9:64px; --sp-10:84px;
+    /* Typography system — Display/headings: Barlow Condensed (700–800) ·
+       Body/interface: Inter (400–600) · Technical/code: JetBrains Mono (400–500).
        Noto Sans Bengali sits in every stack so Bengali glyphs render cleanly. */
-    --font-display:"Barlow Condensed","Space Grotesk","Noto Sans Bengali",sans-serif;
-    --font-head:"Space Grotesk","Inter","Noto Sans Bengali",sans-serif;
+    --font-display:"Barlow Condensed","Inter","Noto Sans Bengali",sans-serif;
+    --font-head:"Barlow Condensed","Inter","Noto Sans Bengali",sans-serif;
     --font-body:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Bengali",Arial,sans-serif;
     --font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,"Noto Sans Bengali",monospace;
     --fs-display:clamp(70px,14.6vw,212px);
-    --fs-section:clamp(38px,5vw,58px);
-    --fs-hero-intro:clamp(34px,4.6vw,54px);
+    --fs-section:clamp(32px,4.6vw,44px);
+    --fs-hero-intro:clamp(40px,5vw,68px);
     --fs-proj-title:clamp(22px,2.4vw,28px);
     --fs-body:17px;
     --fs-btn:15px;
@@ -77,7 +86,7 @@
     --text:#101B2D;
     --text-soft:#33445C;
     --muted:#45576E;
-    --faint:#6E7E92;
+    --faint:#5C6D84;
     --green:#4E7A4E;
     --grid-line:rgba(52,67,88,.08);
     --sheen:rgba(16,27,45,.045);
@@ -95,6 +104,9 @@
     --watermark:rgba(150,116,52,.16);
     --watermark-strong:rgba(150,116,52,.34);
     --code-bg:#0B1322;
+    --success:#3F7D57;
+    --warning:#9A6B14;
+    --error:#C04545;
   }
   /* Black Mode — deep near-black, ivory text, champagne accents */
   [data-theme="black"]{
@@ -104,16 +116,19 @@
     --panel:#141416;
     --panel2:#1B1B1E;
     --line:#28282D;
-    --line-strong:rgba(198,164,106,.4);
-    --accent:#C6A46A;
-    --accent-soft:#D8BE8C;
-    --accent-dim:rgba(198,164,106,.10);
+    --line-strong:rgba(217,190,120,.4);
+    --accent:#D9BE78;
+    --accent-soft:#E4CB87;
+    --accent-dim:rgba(217,190,120,.10);
     --text:#F4F3EF;
     --text-soft:#CFCFC9;
     --muted:#A6A29A;
-    --faint:#7B776E;
-    --green:#93B884;
-    --grid-line:rgba(52,67,88,.3);
+    --faint:#8A867E;
+    --green:#65C99A;
+    --success:#65C99A;
+    --warning:#F2BD68;
+    --error:#F08080;
+    --grid-line:rgba(53,68,90,.3);
     --sheen:rgba(244,243,239,.05);
     --sheen-strong:rgba(244,243,239,.11);
     --nav-bg:rgba(10,10,11,.88);
@@ -124,10 +139,10 @@
     --hero-top:#101013;
     --hero-depth:rgba(34,52,74,.25);
     --hero-shadow:0 2px 22px rgba(0,0,0,.65);
-    --word-fill:rgba(198,164,106,.06);
-    --word-stroke:rgba(198,164,106,.4);
-    --watermark:rgba(198,164,106,.13);
-    --watermark-strong:rgba(198,164,106,.3);
+    --word-fill:rgba(217,190,120,.06);
+    --word-stroke:rgba(217,190,120,.4);
+    --watermark:rgba(217,190,120,.13);
+    --watermark-strong:rgba(217,190,120,.3);
     --code-bg:#0B0B0D;
   }
   *{box-sizing:border-box}
@@ -142,6 +157,7 @@
   a{color:inherit}
   img{max-width:100%}
   ::selection{background:var(--accent);color:var(--on-accent)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   section{scroll-margin-top:84px}
 
   /* reusable typography classes */
@@ -150,13 +166,13 @@
   .t-body{font-family:var(--font-body)}
   .t-mono{font-family:var(--font-mono)}
 
-  .wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+  .wrap{max-width:var(--content-w);margin:0 auto;padding:0 var(--sp-5)}
 
   /* ================= global blueprint grid + particles ================= */
   body::before{
     content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
     background-image:
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='224' height='224'%3E%3Cpath d='M112 105v14M105 112h14' stroke='%23C6A46A' stroke-opacity='.16' stroke-width='1.5'/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='224' height='224'%3E%3Cpath d='M112 105v14M105 112h14' stroke='%23D9BE78' stroke-opacity='.16' stroke-width='1.5'/%3E%3C/svg%3E"),
       linear-gradient(var(--grid-line) 1px,transparent 1px),
       linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
     background-size:224px 224px,56px 56px,56px 56px;
@@ -176,8 +192,8 @@
   body.building .bd.pending{opacity:.14}
   .bd > *{transition:opacity .45s var(--ease)}
   .bd.wire{
-    outline:2px dashed rgba(52,67,88,.95);outline-offset:3px;border-radius:6px;
-    background:rgba(34,52,74,.14)!important;border-color:rgba(52,67,88,.65)!important;
+    outline:2px dashed rgba(53,68,90,.95);outline-offset:3px;border-radius:6px;
+    background:rgba(32,47,70,.14)!important;border-color:rgba(53,68,90,.65)!important;
     box-shadow:none!important;color:transparent!important;
   }
   .bd.wire > *{opacity:.16!important}
@@ -192,7 +208,7 @@
   }
   .agent-cursor svg{display:block;filter:drop-shadow(0 3px 5px rgba(0,0,0,.55))}
   .agent-cursor .tag{
-    position:absolute;left:15px;top:16px;background:#344358;color:#F4F3EF;
+    position:absolute;left:15px;top:16px;background:var(--panel2);color:var(--text);
     font-family:var(--font-mono);font-size:10px;line-height:1;padding:3px 7px;
     border-radius:3px 9px 9px 9px;white-space:nowrap;letter-spacing:.04em;
   }
@@ -241,8 +257,8 @@
     border-bottom:1px solid var(--line);
     transition:background-color .4s ease;
   }
-  .nav-in{max-width:1200px;margin:0 auto;padding:0 20px;height:64px;display:flex;align-items:center;gap:20px}
-  .logo{font-family:var(--font-head);font-weight:700;font-size:23px;letter-spacing:.01em;text-decoration:none;color:var(--text);line-height:1}
+  .nav-in{max-width:var(--content-w);margin:0 auto;padding:0 var(--sp-5);height:64px;display:flex;align-items:center;gap:20px}
+  .logo{font-family:var(--font-head);font-weight:800;font-size:25px;letter-spacing:.05em;text-transform:uppercase;text-decoration:none;color:var(--text);line-height:1}
   .logo em{font-style:normal;color:var(--accent);margin-left:.02em}
   .nav-links{display:flex;gap:4px;margin-left:8px}
   .nav-links a{
@@ -250,6 +266,29 @@
     padding:7px 11px;border-radius:8px;
   }
   .nav-links a:hover{color:var(--text);background:var(--sheen)}
+  /* active section — gold is reserved for this meaningful state */
+  .nav-links a.active{color:var(--accent-soft);background:var(--accent-dim);box-shadow:inset 0 -2px 0 var(--accent)}
+
+  /* mobile menu — button + drop-down panel, ≤860px only */
+  .menu-btn{
+    display:none;align-items:center;justify-content:center;width:42px;height:42px;flex:none;
+    background:var(--sheen);border:1px solid var(--line);border-radius:9px;color:var(--text);cursor:pointer;
+  }
+  .menu-btn:hover{border-color:var(--line-strong)}
+  .mnav{
+    position:absolute;top:64px;left:0;right:0;z-index:89;
+    background:var(--nav-bg);backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);padding:var(--sp-2) var(--sp-4) var(--sp-4);
+    flex-direction:column;
+  }
+  .mnav:not([hidden]){display:flex}
+  .mnav[hidden]{display:none}
+  .mnav a{
+    text-decoration:none;color:var(--muted);font-weight:600;font-size:15px;
+    padding:12px 10px;border-radius:9px;
+  }
+  .mnav a:hover{color:var(--text);background:var(--sheen)}
+  .mnav a.active{color:var(--accent-soft);background:var(--accent-dim)}
   .nav .spacer{flex:1}
   .palette-btn{
     display:flex;align-items:center;gap:9px;cursor:pointer;
@@ -287,9 +326,9 @@
   .hero{
     position:relative;overflow:hidden;
     background:
-      radial-gradient(760px 420px at 88% 6%, rgba(198,164,106,.08), transparent 62%),
+      radial-gradient(760px 420px at 88% 6%, rgba(217,190,120,.08), transparent 62%),
       radial-gradient(720px 500px at 10% 108%, var(--hero-depth), transparent 65%),
-      radial-gradient(560px 380px at -8% 34%, rgba(198,164,106,.04), transparent 60%),
+      radial-gradient(560px 380px at -8% 34%, rgba(217,190,120,.04), transparent 60%),
       linear-gradient(180deg,var(--hero-top),var(--bg) 55%);
   }
   .hero::before{
@@ -300,15 +339,18 @@
             mask-image:radial-gradient(ellipse 90% 70% at 50% 30%,#000 30%,transparent 78%);
   }
   .hero-stage{
-    position:relative;z-index:1;max-width:1280px;margin:0 auto;
-    padding:96px 24px 0;min-height:clamp(620px,94vh,880px);
+    position:relative;z-index:1;max-width:var(--content-w);margin:0 auto;
+    padding:96px var(--sp-6) 0;min-height:clamp(620px,94vh,880px);
     display:flex;flex-direction:column;
   }
+  /* the backdrop word lives in normal flow, above the hero content — the
+     headline can never run into it at any width or height, because the two
+     stack in the flex column with a guaranteed gap (content padding-top) */
   .hero-word{
-    position:absolute;top:31%;left:50%;transform:translate(-50%,-50%);z-index:0;
+    position:relative;z-index:0;margin:clamp(64px,10vh,110px) 0 0;
     font-family:var(--font-display);font-weight:800;text-transform:uppercase;
     font-size:var(--fs-display);line-height:.92;letter-spacing:.01em;
-    margin:0;white-space:nowrap;text-align:center;user-select:none;pointer-events:none;
+    white-space:nowrap;text-align:center;user-select:none;pointer-events:none;
   }
   .hero-word .ltr{
     display:inline-block;color:var(--word-fill);
@@ -324,17 +366,32 @@
     position:absolute;right:1.5%;bottom:0;z-index:2;width:min(440px,37vw);
     pointer-events:none;will-change:transform;
   }
+  /* soft same-tone halo behind the portrait — the hero background glows
+     gently around the figure instead of ending at a hard cutout edge */
+  .cutout-wrap::before{
+    content:"";position:absolute;inset:-8% -14%;z-index:-1;pointer-events:none;
+    background:radial-gradient(closest-side,rgba(217,190,120,.14),rgba(217,190,120,.05) 55%,transparent 78%);
+    filter:blur(10px);
+  }
   .hero-cutout{
     display:block;width:100%;height:auto;
-    -webkit-mask-image:linear-gradient(to bottom,#000 80%,transparent 99%);
-            mask-image:linear-gradient(to bottom,#000 80%,transparent 99%);
-    filter:drop-shadow(0 30px 38px rgba(0,0,0,.55));
+    /* seamless blend — the portrait feathers out on every side (vertical and
+       horizontal masks intersected), so no edge, rectangle or outline of the
+       cutout is ever visible against the hero background, in any theme */
+    -webkit-mask-image:
+      linear-gradient(to bottom,transparent 0,#000 4%,#000 72%,transparent 99.5%),
+      linear-gradient(to right,transparent 0,#000 8%,#000 92%,transparent 100%);
+    -webkit-mask-composite:source-in;
+            mask-image:
+      linear-gradient(to bottom,transparent 0,#000 4%,#000 72%,transparent 99.5%),
+      linear-gradient(to right,transparent 0,#000 8%,#000 92%,transparent 100%);
+            mask-composite:intersect;
   }
   body.built .hero-cutout{animation:floaty 7s ease-in-out infinite}
   @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
-  .hero-content{position:relative;z-index:3;margin-top:auto;max-width:610px;padding:0 0 58px}
+  .hero-content{position:relative;z-index:3;margin-top:auto;max-width:610px;padding:30px 0 58px}
   .hello{font-family:var(--font-mono);font-weight:500;font-size:14px;color:var(--accent-soft);letter-spacing:.14em;margin:0 0 10px}
-  .hero h1{font-family:var(--font-head);font-size:var(--fs-hero-intro);line-height:1.1;margin:0 0 14px;font-weight:700;letter-spacing:-.01em}
+  .hero h1{font-family:var(--font-head);font-size:var(--fs-hero-intro);line-height:1.08;margin:0 0 14px;font-weight:700;letter-spacing:.005em}
   .hero h1 .name{color:var(--accent)}
   .hero-role{font-size:clamp(17px,2.2vw,21px);color:var(--text);font-weight:600;margin:0 0 10px}
   .hero-sub{color:var(--muted);font-size:17px;line-height:1.7;max-width:52ch;margin:0 0 26px}
@@ -377,11 +434,13 @@
     border:1px solid var(--line-strong);border-radius:999px;padding:7px 13px;
     color:var(--text);background:var(--tag-bg);letter-spacing:.16em;font-size:11px;
   }
-  .tag-open .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(147,184,132,.18);flex:none}
+  .tag-open .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(101,201,154,.18);flex:none}
   .tag-name{top:146px;right:26px;color:var(--accent-soft);font-size:13px;letter-spacing:.34em}
   .tag-loc{bottom:22px;right:26px;color:var(--faint);font-size:11px}
-  .tag-coords{bottom:22px;left:26px;color:var(--faint);font-size:11px}
-  .hero-plus{position:absolute;font-family:var(--font-mono);font-size:19px;line-height:1;color:rgba(198,164,106,.38);user-select:none}
+  /* coordinates tag dropped — location label already carries the same fact,
+     one less piece of competing hero metadata */
+  .tag-coords{display:none}
+  .hero-plus{position:absolute;font-family:var(--font-mono);font-size:19px;line-height:1;color:rgba(217,190,120,.38);user-select:none}
   .hero-plus.p1{left:45%;top:118px}
   .hero-plus.p2{right:35%;bottom:170px}
   .hero-plus.p3{left:54%;bottom:70px}
@@ -401,7 +460,7 @@
   @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
   /* ================= sections ================= */
-  .section{padding:84px 0 8px}
+  .section{padding:var(--sp-10) 0 var(--sp-2)}
   .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:30px;flex-wrap:wrap}
   .sec-idx{font-family:var(--font-mono);font-weight:500;font-size:13px;color:var(--accent);letter-spacing:.18em}
   .sec-head h2{font-family:var(--font-display);font-weight:700;text-transform:uppercase;font-size:var(--fs-section);margin:0;letter-spacing:.02em;line-height:1.05}
@@ -451,8 +510,8 @@
 
   /* code snippets */
   .code-stack{display:grid;gap:14px;margin:24px 0 6px}
-  .code-card{border:1px solid var(--line);border-radius:12px;background:var(--code-bg);overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.35),0 16px 34px rgba(0,0,0,.28)}
-  .code-head{display:flex;align-items:center;gap:7px;padding:9px 13px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
+  .code-card{border:1px solid var(--line);border-radius:12px;background:var(--code-bg);overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.35),0 4px 10px rgba(0,0,0,.25),0 22px 44px rgba(0,0,0,.34)}
+  .code-head{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:9px 13px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
   .code-head i{width:10px;height:10px;border-radius:50%;display:block;flex:none}
   .code-head i:nth-child(1){background:#ff5f57}.code-head i:nth-child(2){background:#febc2e}.code-head i:nth-child(3){background:#28c840}
   .code-head span{font-family:var(--font-mono);font-weight:500;font-size:12px;color:var(--muted);margin-left:5px}
@@ -505,10 +564,21 @@
     box-shadow:0 2px 3px rgba(0,0,0,.4),0 18px 34px rgba(0,0,0,.30),0 40px 70px rgba(0,0,0,.28);
   }
   .proj .tags,.proj .proj-links{transform:translateZ(14px)}
-  .proj-top{display:flex;align-items:baseline;gap:12px}
+  .proj-top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
   .proj-num{font-family:var(--font-mono);font-weight:500;font-size:13px;color:var(--accent)}
   .proj h3{margin:0;font-family:var(--font-head);font-weight:700;font-size:var(--fs-proj-title);line-height:1.15}
-  .proj-kind{margin-left:auto;font-family:var(--font-mono);font-weight:500;font-size:11.5px;color:var(--faint);white-space:nowrap}
+  .proj-kind{
+    margin-left:auto;font-family:var(--font-mono);font-weight:500;font-size:11px;letter-spacing:.1em;
+    color:var(--muted);white-space:nowrap;border:1px solid var(--line);border-radius:999px;
+    padding:4px 10px;background:var(--tag-bg);display:inline-flex;align-items:center;gap:7px;
+  }
+  .proj-kind .dot{width:7px;height:7px;border-radius:50%;background:var(--faint);flex:none}
+  .proj-kind.is-live .dot{background:var(--green);box-shadow:0 0 0 3px rgba(101,201,154,.16)}
+  .proj-kind.is-apk .dot{background:var(--accent)}
+  .proj-flag{
+    font-family:var(--font-mono);font-size:10.5px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--on-accent);background:var(--accent);border-radius:999px;padding:3px 9px;white-space:nowrap;
+  }
   .proj p{margin:0;color:var(--text-soft);font-size:16px;line-height:1.65;flex:1}
   .proj .note{font-size:13px;font-weight:500;color:var(--accent-soft);border:1px dashed var(--line-strong);border-radius:9px;padding:7px 10px;background:var(--accent-dim)}
   .tags{display:flex;gap:7px;flex-wrap:wrap}
@@ -521,13 +591,49 @@
   .proj-links a:hover{border-color:var(--line-strong)}
   .proj-links a.live{background:var(--accent);color:var(--on-accent);border-color:transparent}
   .proj-links a.live:hover{background:var(--accent-soft)}
+  .proj-links a.primary{background:var(--accent);color:var(--on-accent);border-color:transparent}
+  .proj-links a.primary:hover{background:var(--accent-soft)}
+  /* featured — the strongest verified live projects span the full row */
+  .proj.featured{grid-column:1 / -1;border-color:var(--line-strong)}
+  /* expandable case study — problem / build / verified outcome, no invented results */
+  .case{border-top:1px dashed var(--line);padding-top:11px}
+  .case summary{
+    cursor:pointer;list-style:none;font-family:var(--font-mono);font-size:12px;font-weight:500;
+    letter-spacing:.1em;color:var(--accent-soft);
+  }
+  .case summary::-webkit-details-marker{display:none}
+  .case summary::after{content:"+";margin-left:8px;color:var(--accent)}
+  .case[open ] summary::after{content:"–"}
+  .case-rows{display:grid;gap:9px;margin-top:11px}
+  .case-row{display:grid;grid-template-columns:92px minmax(0,1fr);gap:10px}
+  .case-row dt{font-family:var(--font-mono);font-size:10.5px;font-weight:500;letter-spacing:.13em;color:var(--faint);text-transform:uppercase;padding-top:3px}
+  .case-row dd{margin:0;font-size:14px;line-height:1.6;color:var(--muted)}
+  @media (max-width:620px){ .case-row{grid-template-columns:76px minmax(0,1fr)} }
+
+  /* showcase banner — the very first item of the projects section:
+     the full showcase holds every project in one place */
+  .showcase-banner{
+    display:flex;align-items:center;gap:22px;flex-wrap:wrap;
+    border:1px solid var(--line-strong);border-radius:var(--radius);
+    padding:24px 26px;margin-bottom:16px;
+    background:
+      radial-gradient(420px 200px at 100% 0%,var(--accent-dim),transparent 65%),
+      linear-gradient(180deg,var(--panel2),var(--panel));
+    box-shadow:0 1px 2px rgba(0,0,0,.32),0 16px 34px rgba(0,0,0,.22);
+  }
+  .showcase-banner .sb-copy{min-width:min(420px,100%)}
+  .showcase-banner .sb-k{margin:0 0 6px;font-family:var(--font-mono);font-weight:500;font-size:11.5px;letter-spacing:.22em;color:var(--accent);text-transform:uppercase}
+  .showcase-banner h3{margin:0;font-family:var(--font-head);font-weight:700;font-size:clamp(23px,2.6vw,29px);line-height:1.15}
+  .showcase-banner .sb-sub{margin:7px 0 0;color:var(--muted);font-size:15px;line-height:1.6;max-width:58ch}
+  .showcase-banner .btn{margin-left:auto;flex:none}
+  @media (max-width:620px){ .showcase-banner .btn{margin-left:0} }
 
   /* architecture */
   .arch{border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);padding:24px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.32),0 18px 38px rgba(0,0,0,.24)}
   .arch-flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:14px;align-items:stretch}
   .arch-layer{border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--bg2)}
   .arch-layer h3{margin:0 0 3px;font-family:var(--font-head);font-weight:600;font-size:16px}
-  .arch-layer .l-sub{font-family:var(--font-mono);font-weight:500;font-size:11px;letter-spacing:.16em;color:var(--accent);margin:0 0 10px}
+  .arch-layer .l-sub{font-family:var(--font-mono);font-weight:500;font-size:11px;letter-spacing:.16em;color:var(--accent);margin:0 0 12px;border-bottom:1px dashed var(--line);padding-bottom:9px}
   .arch-layer ul{margin:0;padding:0;list-style:none;display:grid;gap:7px}
   .arch-layer li{font-size:13.5px;color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:6px 9px;background:var(--sheen)}
   .arch-arrow{display:grid;place-items:center;color:var(--accent);font-size:22px;font-family:var(--font-mono)}
@@ -553,7 +659,6 @@
   .wf-step:first-child{border-top:0;padding-top:2px}
   .wf-step .wn{font-family:var(--font-mono);font-weight:500;font-size:13px;color:var(--accent);padding-top:4px;flex:none}
   .wf-step h3{margin:0 0 5px;font-family:var(--font-head);font-weight:700;font-size:18.5px}
-  .wf-step h3 i{font-style:normal;color:var(--accent);font-family:var(--font-mono);font-size:14px;margin-left:6px}
   .wf-step p{margin:0;color:var(--muted);font-size:14.5px}
 
   /* terminal */
@@ -574,12 +679,17 @@
   .term-body .dim{color:var(--faint)}
   .term-body .hl{color:var(--accent-soft)}
   .term-body a{color:var(--accent-soft)}
-  .term-form{display:flex;gap:8px;align-items:center;border-top:1px solid var(--line);padding:12px 16px;background:rgba(255,255,255,.02)}
+  .term-form{display:flex;gap:8px;align-items:center;border-top:1px solid var(--line);padding:12px 16px;background:rgba(255,255,255,.02);transition:box-shadow .25s ease,background-color .25s ease}
+  /* the input row is the one interactive strip of the terminal — when it
+     holds keyboard focus the whole row lights up, so focus is unmistakable
+     even though the bare input itself carries no outline */
+  .term-form:focus-within{box-shadow:inset 0 0 0 1.5px var(--accent);background:var(--accent-dim)}
   .term-form label{font-family:var(--font-mono);font-size:14px;color:var(--accent);white-space:nowrap}
   .term-form input{
     flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--text);
     font-family:var(--font-mono);font-size:14px;caret-color:var(--accent);
   }
+  .term-form input:focus-visible{outline:none}
   .term-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
   .term-chips button{
     appearance:none;cursor:pointer;font-family:var(--font-mono);font-size:12.5px;
@@ -591,13 +701,16 @@
   .contact-box{
     border:1px solid var(--line);border-radius:20px;padding:40px 34px;
     background:
-      radial-gradient(560px 260px at 50% -20%, rgba(198,164,106,.07), transparent 65%),
+      radial-gradient(560px 260px at 50% -20%, rgba(217,190,120,.07), transparent 65%),
       linear-gradient(180deg,var(--panel2),var(--panel));
     box-shadow:0 1px 2px rgba(0,0,0,.35),0 24px 52px rgba(0,0,0,.28);
   }
   .contact-eyebrow{font-family:var(--font-mono);font-weight:500;font-size:12.5px;letter-spacing:.24em;color:var(--accent);margin:0 0 12px}
   .contact-box h2{font-family:var(--font-head);font-size:clamp(30px,4.4vw,44px);margin:0 0 12px;line-height:1.12;font-weight:700;letter-spacing:-.01em}
-  .contact-intro{color:var(--muted);max-width:62ch;margin:0 0 28px;font-size:16px}
+  .contact-intro{color:var(--muted);max-width:62ch;margin:0 0 22px;font-size:16px}
+  /* one prominent email action; the cards below are the secondary options */
+  .contact-actions{display:flex;flex-wrap:wrap;gap:12px;margin:0 0 28px}
+  .contact-actions .btn{word-break:break-word}
   .contact-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:26px}
   .ccard{
     border:1px solid var(--line);border-radius:14px;padding:18px;background:var(--bg2);
@@ -629,7 +742,7 @@
   .mf-note{margin:12px 0 0;font-size:13px;color:var(--faint)}
   @media (max-width:860px){ .contact-cards{grid-template-columns:1fr} .mf-grid{grid-template-columns:1fr} }
 
-  footer{margin-top:84px;border-top:1px solid var(--line);padding:22px 0 104px}
+  footer{margin-top:84px;border-top:1px solid var(--line);padding:22px 0 34px}
   .foot-in{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:13.5px;color:var(--faint)}
   .foot-in .spacer{flex:1}
   .foot-tech{font-size:12.5px}
@@ -666,9 +779,13 @@
   @media (max-width:1020px){
     .wf-grid{gap:34px}
     .skill-groups{grid-template-columns:1fr 1fr}
+    /* the two lower decorative "+" marks can land on hero copy at mid
+       widths — the top one stays, these go */
+    .hero-plus.p2,.hero-plus.p3{display:none}
   }
   @media (max-width:860px){
     .nav-links{display:none}
+    .menu-btn{display:flex}
     .hero{padding-top:110px}
     .hero-grid{grid-template-columns:1fr;gap:38px}
     .photo-card{order:-1;width:min(320px,88%)}
@@ -694,6 +811,11 @@
     .stat:nth-child(odd){border-left:0}
     .stat:nth-child(n+3){border-top:1px solid var(--line)}
     .term-body{height:300px;font-size:13px}
+    /* 16px inputs stop mobile browsers auto-zooming on focus, and the
+       quick-command chips get a comfortable touch height */
+    .term-form input{font-size:16px}
+    .term-chips button{padding:9px 14px}
+    .mf-field input,.mf-field textarea{font-size:16px}
     .palette-btn .pb-text{display:none}
     .palette-btn kbd{display:none}
     .palette-btn{gap:0;padding:8px 10px}
@@ -729,15 +851,22 @@
   /* ================= hero + pill responsive overrides ================= */
   @media (max-width:860px){
     .hero{padding-top:0}
-    .hero-stage{min-height:0;padding:92px 18px 0}
-    /* PORTFOLIO starts at 126px; the OPEN TO WORK badge row above it ends
-       around 106px, so the badge can never cover a letter of the word */
-    .hero-word{top:126px;font-size:17.2vw}
+    /* the badge row (OPEN TO WORK / EST. 2026) ends around y=106px; the
+       in-flow PORTFOLIO word starts at the stage padding edge, 128px —
+       the badge can never cover a letter of the word */
+    .hero-stage{min-height:0;padding:128px 18px 0}
+    .hero-word{position:relative;top:auto;left:auto;transform:none;order:1;margin:10px 0 0;font-size:16vw;letter-spacing:0}
     .cutout-wrap{position:relative;right:auto;bottom:auto;order:2;width:min(290px,72vw);margin:20px auto 0}
-    /* smoother, longer bottom fade on the portrait at phone sizes */
+    /* same all-sides feather as desktop, with the longer smoother bottom fade */
     .hero-cutout{
-      -webkit-mask-image:linear-gradient(to bottom,#000 80%,rgba(0,0,0,.55) 92%,transparent 100%);
-              mask-image:linear-gradient(to bottom,#000 80%,rgba(0,0,0,.55) 92%,transparent 100%);
+      -webkit-mask-image:
+        linear-gradient(to bottom,transparent 0,#000 4%,#000 70%,rgba(0,0,0,.55) 90%,transparent 100%),
+        linear-gradient(to right,transparent 0,#000 9%,#000 91%,transparent 100%);
+      -webkit-mask-composite:source-in;
+              mask-image:
+        linear-gradient(to bottom,transparent 0,#000 4%,#000 70%,rgba(0,0,0,.55) 90%,transparent 100%),
+        linear-gradient(to right,transparent 0,#000 9%,#000 91%,transparent 100%);
+              mask-composite:intersect;
     }
     .hero-content{order:3;margin-top:22px;padding:0 0 46px;max-width:none}
     .tag-name,.tag-stack,.tag-loc,.tag-coords,.hero-plus.p2,.hero-plus.p3{display:none}
@@ -801,7 +930,19 @@
       <span class="theme-dot" aria-hidden="true"></span><span id="theme-name">Navy</span>
     </button>
     <a class="nav-gh" href="https://github.com/asmitsr" target="_blank" rel="noopener">GitHub ↗</a>
+    <button class="menu-btn" type="button" id="menu-btn" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
   </div>
+  <nav class="mnav" id="mobile-menu" aria-label="Sections" hidden>
+    <a href="#about">About</a>
+    <a href="#skills">Skills</a>
+    <a href="#projects">Projects</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#workflow">Workflow</a>
+    <a href="#terminal">Terminal</a>
+    <a href="#contact">Contact</a>
+  </nav>
 </header>
 
 <main id="top">
@@ -830,8 +971,8 @@
         <p class="hero-role bd" data-type>Building useful Android &amp; web experiences — from idea to live app.</p>
         <p class="hero-sub bd">Aspiring full-stack &amp; Android developer from Chattogram — I build Android apps with Kotlin and Jetpack Compose, and web apps with Python + Flask and Next.js: small tools that solve real problems, shipped and live.</p>
         <div class="hero-ctas bd">
-          <a class="btn primary magnetic" href="#projects">Explore My Work</a>
-          <a class="btn magnetic" href="https://github.com/asmitsr" target="_blank" rel="noopener">GitHub ↗</a>
+          <a class="btn primary magnetic" href="#projects">Explore Projects</a>
+          <a class="btn magnetic" href="https://github.com/asmitsr" target="_blank" rel="noopener">GitHub Profile ↗</a>
         </div>
         <div class="hero-stats bd" aria-label="Quick facts">
           <div class="stat"><b>16</b><span>GitHub repos</span></div>
@@ -931,7 +1072,7 @@
           </div>
         </div>
         <div class="skill-group reveal">
-          <h3>Web — frontend</h3>
+          <h3>Web Frontend</h3>
           <p class="g-sub">// interfaces</p>
           <div class="skill">
             <div class="skill-top"><span class="skill-name">HTML / CSS / JavaScript</span><span class="lvl core">CORE</span></div>
@@ -996,64 +1137,121 @@
         <h2>Projects</h2>
         <p>Six real builds — three of them live on the web right now.</p>
       </div>
+      <div class="showcase-banner reveal">
+        <div class="sb-copy">
+          <p class="sb-k">Full Showcase</p>
+          <h3>Every project, in one showcase</h3>
+          <p class="sb-sub">All of my projects live in the full showcase — the live websites, the Android app downloads and everything else I've built, gathered in one place.</p>
+        </div>
+        <a class="btn primary magnetic" href="https://showcase-topaz-seven.vercel.app/" target="_blank" rel="noopener">Open the Full Showcase →</a>
+      </div>
       <div class="proj-grid">
 
-        <article class="proj reveal tilt">
-          <div class="proj-top"><span class="proj-num">01</span><h3>Password Leak Checker</h3><span class="proj-kind">WEB · LIVE</span></div>
+        <article class="proj reveal tilt featured">
+          <div class="proj-top"><span class="proj-num">01</span><h3>Password Leak Checker</h3><span class="proj-flag">Featured</span><span class="proj-kind is-live"><i class="dot"></i>WEB · LIVE</span></div>
           <p>Checks whether a password or email has appeared in known data breaches, and rates password strength — the lookup never stores what you type.</p>
           <div class="tags"><span>Python</span><span>Flask</span><span>Breach APIs</span></div>
+          <details class="case">
+            <summary>Case study — problem, build &amp; outcome</summary>
+            <dl class="case-rows">
+              <div class="case-row"><dt>Problem</dt><dd>People reuse the same password everywhere and have no quick way to tell whether it has already leaked in a breach.</dd></div>
+              <div class="case-row"><dt>Built</dt><dd>A Flask backend that queries breach data through external APIs and rates password strength — nothing typed into the checker is ever stored.</dd></div>
+              <div class="case-row"><dt>Outcome</dt><dd>Live and public on Vercel — anyone can run a check right now from the Open Website button below.</dd></div>
+            </dl>
+          </details>
           <div class="proj-links">
-            <a class="live" href="https://password-leak-checker.vercel.app" target="_blank" rel="noopener">Live site ↗</a>
-            <a href="https://github.com/asmitsr/password-leak-checker" target="_blank" rel="noopener">Repo ↗</a>
+            <a class="primary" href="https://password-leak-checker.vercel.app/" target="_blank" rel="noopener">Open Website →</a>
+            <a href="https://github.com/asmitsr/password-leak-checker" target="_blank" rel="noopener">Source Code ↗</a>
           </div>
         </article>
 
-        <article class="proj reveal tilt">
-          <div class="proj-top"><span class="proj-num">02</span><h3>Expense Splitter</h3><span class="proj-kind">WEB · LIVE</span></div>
+        <article class="proj reveal tilt featured">
+          <div class="proj-top"><span class="proj-num">02</span><h3>Expense Splitter</h3><span class="proj-flag">Featured</span><span class="proj-kind is-live"><i class="dot"></i>WEB · LIVE</span></div>
           <p>Splits group expenses fairly: create a group, add members and shared costs, and see exactly who owes whom — with 50 currencies to choose from, picked per group.</p>
           <div class="tags"><span>Python</span><span>Flask</span><span>SQLite</span><span>Chart.js</span></div>
+          <details class="case">
+            <summary>Case study — problem, build &amp; outcome</summary>
+            <dl class="case-rows">
+              <div class="case-row"><dt>Problem</dt><dd>Group trips and shared flats end in messy who-owes-whom maths that nobody wants to work out by hand.</dd></div>
+              <div class="case-row"><dt>Built</dt><dd>Flask + SQLite behind it: groups, members and shared expenses, a settle-up algorithm that minimises the number of transfers, and a currency picked per group at creation from 50 Asian currencies.</dd></div>
+              <div class="case-row"><dt>Outcome</dt><dd>Live on Vercel and verified end-to-end: a 900 expense split three ways settles as exactly two transfers of 300.</dd></div>
+            </dl>
+          </details>
           <div class="proj-links">
-            <a class="live" href="https://expense-splitter-lovat-iota.vercel.app" target="_blank" rel="noopener">Live site ↗</a>
-            <a href="https://github.com/asmitsr/expense-splitter" target="_blank" rel="noopener">Repo ↗</a>
+            <a class="primary" href="https://expense-splitter-lovat-iota.vercel.app/" target="_blank" rel="noopener">Open Website →</a>
+            <a href="https://github.com/asmitsr/expense-splitter" target="_blank" rel="noopener">Source Code ↗</a>
           </div>
         </article>
 
         <article class="proj reveal tilt">
-          <div class="proj-top"><span class="proj-num">03</span><h3>DoremanAI</h3><span class="proj-kind">ANDROID</span></div>
+          <div class="proj-top"><span class="proj-num">03</span><h3>DoremanAI</h3><span class="proj-kind is-apk"><i class="dot"></i>ANDROID · DEBUG APK</span></div>
           <p>A Siri-style, voice-controlled personal assistant for Android — talk to it and it acts: calls, messages, answers and everyday tasks, powered by AI gateways.</p>
           <p class="note">Current build is a debug APK only — not a signed release build.</p>
           <div class="tags"><span>Kotlin</span><span>Jetpack Compose</span><span>Voice</span><span>AI</span></div>
+          <details class="case">
+            <summary>Case study — problem, build &amp; outcome</summary>
+            <dl class="case-rows">
+              <div class="case-row"><dt>Problem</dt><dd>Everyday phone tasks — calling, messaging, quick answers — mean tapping through apps; a voice-first assistant can do them hands-free.</dd></div>
+              <div class="case-row"><dt>Built</dt><dd>Kotlin + Jetpack Compose: common voice commands are handled on-device first, and open questions go to AI gateways the user configures with their own keys.</dd></div>
+              <div class="case-row"><dt>Outcome</dt><dd>Distributed as a debug APK through the GitHub releases page — labelled honestly as a debug build, not a signed release.</dd></div>
+            </dl>
+          </details>
           <div class="proj-links">
-            <a href="https://github.com/asmitsr/DoremanAI" target="_blank" rel="noopener">Repo ↗</a>
+            <a class="primary" href="https://github.com/asmitsr/DoremanAI/releases/tag/latest-apk" target="_blank" rel="noopener">Download APK ↓</a>
+            <a href="https://github.com/asmitsr/DoremanAI" target="_blank" rel="noopener">Source Code ↗</a>
           </div>
         </article>
 
         <article class="proj reveal tilt">
-          <div class="proj-top"><span class="proj-num">04</span><h3>SUST OR DIE</h3><span class="proj-kind">ANDROID</span></div>
+          <div class="proj-top"><span class="proj-num">04</span><h3>SUST OR DIE</h3><span class="proj-kind is-apk"><i class="dot"></i>ANDROID · DEBUG APK</span></div>
           <p>My personal study-planner app: a 60-day study plan with syllabus tracking, Focus Mode, custom alarms and deadline countdowns.</p>
-          <p class="note">Built for my own study routine — not for public distribution.</p>
+          <p class="note">Public debug-APK download — the source code stays private.</p>
           <div class="tags"><span>Kotlin</span><span>Jetpack Compose</span><span>Study planner</span></div>
+          <details class="case">
+            <summary>Case study — problem, build &amp; outcome</summary>
+            <dl class="case-rows">
+              <div class="case-row"><dt>Problem</dt><dd>My own study routine needed one place for the plan, the syllabus and the deadlines — scattered notes were not working.</dd></div>
+              <div class="case-row"><dt>Built</dt><dd>Kotlin + Jetpack Compose: a 60-day study plan with syllabus tracking, Focus Mode, custom alarms, deadline countdowns and an offline routine tab.</dd></div>
+              <div class="case-row"><dt>Outcome</dt><dd>Shared as a public debug-APK download (11.2 MB) — the app is public, the source code stays private.</dd></div>
+            </dl>
+          </details>
           <div class="proj-links">
-            <a href="https://github.com/asmitsr/sust-or-die" target="_blank" rel="noopener">Repo ↗</a>
+            <a class="primary" href="https://raw.githubusercontent.com/asmitsr/showcase/main/sust-or-die.apk" target="_blank" rel="noopener">Download APK · 11.2 MB ↓</a>
           </div>
         </article>
 
         <article class="proj reveal tilt">
-          <div class="proj-top"><span class="proj-num">05</span><h3>IELTS Pathway</h3><span class="proj-kind">WEB · LIVE</span></div>
+          <div class="proj-top"><span class="proj-num">05</span><h3>IELTS Pathway</h3><span class="proj-kind is-live"><i class="dot"></i>WEB · LIVE</span></div>
           <p>A 60-day IELTS preparation planner aimed at Band 7 — 10 hours a day with spaced revision built in, in both Bengali and English, with dark and light themes.</p>
           <div class="tags"><span>Next.js</span><span>TypeScript</span><span>BN / EN</span></div>
+          <details class="case">
+            <summary>Case study — problem, build &amp; outcome</summary>
+            <dl class="case-rows">
+              <div class="case-row"><dt>Problem</dt><dd>IELTS prep is usually a pile of disconnected resources — no day-by-day path that also schedules the revision.</dd></div>
+              <div class="case-row"><dt>Built</dt><dd>Next.js + TypeScript: a 60-day, 10-hour-a-day plan targeting Band 7 with spaced revision built in, in Bengali and English, with dark and light themes.</dd></div>
+              <div class="case-row"><dt>Outcome</dt><dd>Live and public on Vercel — the full 60-day plan is open to anyone from the Open Website button below.</dd></div>
+            </dl>
+          </details>
           <div class="proj-links">
-            <a class="live" href="https://ielts-pathway-fccu.vercel.app" target="_blank" rel="noopener">Live site ↗</a>
-            <a href="https://github.com/asmitsr/ielts-pathway" target="_blank" rel="noopener">Repo ↗</a>
+            <a class="primary" href="https://ielts-pathway-fccu.vercel.app/" target="_blank" rel="noopener">Open Website →</a>
+            <a href="https://github.com/asmitsr/ielts-pathway" target="_blank" rel="noopener">Source Code ↗</a>
           </div>
         </article>
 
         <article class="proj reveal tilt">
-          <div class="proj-top"><span class="proj-num">06</span><h3>Skill DNA</h3><span class="proj-kind">WEB TOOL</span></div>
+          <div class="proj-top"><span class="proj-num">06</span><h3>Skill DNA</h3><span class="proj-kind"><i class="dot"></i>WEB TOOL · SOURCE</span></div>
           <p>A GitHub skill analyzer that turns a public GitHub profile into clear skill proof a recruiter can read — what you’ve actually built, not just what you claim.</p>
           <div class="tags"><span>GitHub API</span><span>Web</span><span>Analyzer</span></div>
+          <details class="case">
+            <summary>Case study — problem, build &amp; outcome</summary>
+            <dl class="case-rows">
+              <div class="case-row"><dt>Problem</dt><dd>Recruiters see claimed skills, not proof — a GitHub profile holds the proof, but it is hard to read at a glance.</dd></div>
+              <div class="case-row"><dt>Built</dt><dd>A web analyzer on the GitHub API that turns a public profile into a clear, readable summary of what someone has actually built.</dd></div>
+              <div class="case-row"><dt>Outcome</dt><dd>Source is public on GitHub — there is no live demo to link for this one.</dd></div>
+            </dl>
+          </details>
           <div class="proj-links">
-            <a href="https://github.com/asmitsr/skill-dna" target="_blank" rel="noopener">Repo ↗</a>
+            <a href="https://github.com/asmitsr/skill-dna" target="_blank" rel="noopener">Source Code ↗</a>
           </div>
         </article>
 
@@ -1126,10 +1324,10 @@
         </div>
         <div class="wf-steps">
           <div class="wf-step reveal"><span class="wn">01</span><div><h3>Discover</h3><p>Start from something real — a leaked password, a messy group bill, my own exam routine. If the problem isn’t real, I don’t build it.</p></div></div>
-          <div class="wf-step reveal"><span class="wn">02</span><div><h3>Plan<i>→</i></h3><p>Decide the smallest version that is actually useful, and the stack that fits it — Kotlin for Android, Flask or Next.js for the web.</p></div></div>
-          <div class="wf-step reveal"><span class="wn">03</span><div><h3>Design<i>→</i></h3><p>Lay the screens out phone-first, because my own Android phone is the screen everything has to work on.</p></div></div>
-          <div class="wf-step reveal"><span class="wn">04</span><div><h3>Develop<i>→</i></h3><p>Write it in small pieces, committing to GitHub as it grows, until the whole flow works end to end.</p></div></div>
-          <div class="wf-step reveal"><span class="wn">05</span><div><h3>Test<i>→</i></h3><p>Run it on a real phone with real data, then fix what breaks — including the bugs only real use turns up.</p></div></div>
+          <div class="wf-step reveal"><span class="wn">02</span><div><h3>Plan</h3><p>Decide the smallest version that is actually useful, and the stack that fits it — Kotlin for Android, Flask or Next.js for the web.</p></div></div>
+          <div class="wf-step reveal"><span class="wn">03</span><div><h3>Design</h3><p>Lay the screens out phone-first, because my own Android phone is the screen everything has to work on.</p></div></div>
+          <div class="wf-step reveal"><span class="wn">04</span><div><h3>Develop</h3><p>Write it in small pieces, committing to GitHub as it grows, until the whole flow works end to end.</p></div></div>
+          <div class="wf-step reveal"><span class="wn">05</span><div><h3>Test</h3><p>Run it on a real phone with real data, then fix what breaks — including the bugs only real use turns up.</p></div></div>
           <div class="wf-step reveal"><span class="wn">06</span><div><h3>Deploy</h3><p>Ship it live on Vercel or as an APK, share the link, and keep improving from what comes back.</p></div></div>
         </div>
       </div>
@@ -1149,7 +1347,7 @@
         <div class="term-body" id="term-body" aria-live="polite"></div>
         <form class="term-form" id="term-form">
           <label for="term-input">asmit@portfolio:~$</label>
-          <input id="term-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="type a command… (try: help)" aria-label="Terminal command input" />
+          <input id="term-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="send" placeholder="type a command… (try: help)" aria-label="Terminal command input" />
         </form>
       </div>
       <div class="term-chips" aria-label="Quick commands">
@@ -1170,6 +1368,9 @@
         <p class="contact-eyebrow">GET IN TOUCH</p>
         <h2 data-type id="contact-h2">Let’s Connect &amp; Build</h2>
         <p class="contact-intro">Open for freelance projects, open-source collaborations, and tech opportunities. Feel free to reach out via email or phone!</p>
+        <div class="contact-actions">
+          <a class="btn primary magnetic" href="mailto:asmitsr.official@gmail.com">Email me — asmitsr.official@gmail.com</a>
+        </div>
         <div class="contact-cards">
           <div class="ccard tilt">
             <span class="ck"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>Direct Email</span>
@@ -1181,7 +1382,7 @@
             <a class="calt" href="https://wa.me/8801540752303" target="_blank" rel="noopener">Message on WhatsApp ↗</a>
           </div>
           <div class="ccard tilt">
-            <span class="ck"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.15c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.75 2.69 1.25 3.34.95.1-.74.4-1.25.72-1.53-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11.1 11.1 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 1.28 1.06.78.57.78 1.55v2.31c0 .3.21.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>GitHub Profile</span>
+            <span class="ck"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub Profile</span>
             <a class="cv" href="https://github.com/asmitsr" target="_blank" rel="noopener">github.com/asmitsr</a>
           </div>
         </div>
@@ -1619,8 +1820,8 @@
     setPillLabel("Building · Hero");
     window.scrollTo({ top: 0, behavior: "auto" });
     if(!cur1){
-      cur1 = makeCursor("c1", "agent", "#344358");
-      cur2 = makeCursor("c2", "agent-2", "#C6A46A");
+      cur1 = makeCursor("c1", "agent", "#35445A");
+      cur2 = makeCursor("c2", "agent-2", "#D9BE78");
     }
     cur1.x = window.innerWidth * 0.3; cur1.y = 150;
     cur2.x = window.innerWidth * 0.6; cur2.y = 220;
@@ -1758,7 +1959,7 @@
       hwTick = true;
       requestAnimationFrame(function(){
         hwTick = false;
-        heroWord.style.transform = "translate(-50%,-50%) translate(" + (-hwX * 14).toFixed(1) + "px," + (-hwY * 9).toFixed(1) + "px)";
+        heroWord.style.transform = "translate(" + (-hwX * 14).toFixed(1) + "px," + (-hwY * 9).toFixed(1) + "px)";
       });
     });
     heroSec.addEventListener("pointerleave", function(){
@@ -1826,7 +2027,7 @@
       print("1. Password Leak Checker — live · Python + Flask");
       print("2. Expense Splitter — live · Python + Flask · 50 currencies");
       print("3. DoremanAI — Android voice assistant · Kotlin (debug APK)");
-      print("4. SUST OR DIE — personal study app · Kotlin (personal use)");
+      print("4. SUST OR DIE — Android study app · Kotlin (debug APK download)");
       print("5. IELTS Pathway — live · Next.js · BN/EN Band 7 plan");
       print("6. Skill DNA — GitHub skill analyzer");
       print("Scroll to the Projects section for links.", "dim");
@@ -1942,6 +2143,54 @@
     setTheme(themeOrder[(themeIdx + 1) % themeOrder.length]);
   });
 
+  /* ============ mobile menu — open, close, dismiss ============ */
+  var menuBtn = document.getElementById("menu-btn");
+  var mnav = document.getElementById("mobile-menu");
+  function setMenu(open){
+    if(!mnav || !menuBtn) return;
+    mnav.hidden = !open;
+    menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+    menuBtn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  }
+  function closeMenu(){ setMenu(false); }
+  if(menuBtn && mnav){
+    menuBtn.addEventListener("click", function(ev){
+      ev.stopPropagation();
+      setMenu(mnav.hidden);
+    });
+    mnav.querySelectorAll("a").forEach(function(a){
+      a.addEventListener("click", closeMenu);
+    });
+    document.addEventListener("click", function(ev){
+      if(!mnav.hidden && !ev.target.closest(".nav")) closeMenu();
+    });
+    document.addEventListener("keydown", function(ev){
+      if(ev.key === "Escape") closeMenu();
+    });
+    window.addEventListener("resize", function(){
+      if(window.innerWidth > 860) closeMenu();
+    });
+  }
+
+  /* ============ scrollspy — gold marks the section in view ============ */
+  var spyLinks = q('.nav-links a[href^="#"], .mnav a[href^="#"]');
+  function setActiveNav(id){
+    spyLinks.forEach(function(a){
+      a.classList.toggle("active", a.getAttribute("href") === "#" + id);
+    });
+  }
+  if("IntersectionObserver" in window && spyLinks.length){
+    var spy = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting) setActiveNav(e.target.id);
+      });
+    }, { rootMargin: "-38% 0px -55% 0px" });
+    ["about","skills","projects","architecture","workflow","terminal","contact"].forEach(function(id){
+      var s = document.getElementById(id);
+      if(s) spy.observe(s);
+    });
+  }
+
   /* ============ command palette (Ctrl+K) ============ */
   var palette = document.getElementById("palette");
   var palInput = document.getElementById("palette-input");
@@ -1965,6 +2214,7 @@
     { k: "OPEN", label: "Password Leak Checker — live site", hint: "vercel.app", run: function(){ window.open("https://password-leak-checker.vercel.app", "_blank", "noopener"); } },
     { k: "OPEN", label: "Expense Splitter — live site", hint: "vercel.app", run: function(){ window.open("https://expense-splitter-lovat-iota.vercel.app", "_blank", "noopener"); } },
     { k: "OPEN", label: "IELTS Pathway — live site", hint: "vercel.app", run: function(){ window.open("https://ielts-pathway-fccu.vercel.app", "_blank", "noopener"); } },
+    { k: "OPEN", label: "Full Showcase — all projects in one place", hint: "vercel.app", run: function(){ window.open("https://showcase-topaz-seven.vercel.app/", "_blank", "noopener"); } },
     { k: "RUN", label: "Theme: Midnight Navy", hint: "default", run: function(){ setTheme("navy"); } },
     { k: "RUN", label: "Theme: White Mode", hint: "theme", run: function(){ setTheme("white"); } },
     { k: "RUN", label: "Theme: Black Mode", hint: "theme", run: function(){ setTheme("black"); } },
