@@ -1182,7 +1182,7 @@
         <div class="hero-stats bd" aria-label="Quick facts">
           <div class="stat"><b>16</b><span>GitHub repos</span></div>
           <div class="stat"><b>4</b><span>Live web apps</span></div>
-          <div class="stat"><b>6</b><span>Featured projects</span></div>
+          <div class="stat"><b>7</b><span>Featured projects</span></div>
           <div class="stat"><b>2</b><span>Platforms · Android &amp; Web</span></div>
         </div>
       </div>
@@ -1346,7 +1346,7 @@
       <div class="sec-head reveal">
         <span class="sec-idx">03 /</span>
         <h2>Projects</h2>
-        <p>Six real builds — four of them live on the web right now.</p>
+        <p>Seven real builds — four of them live on the web right now.</p>
       </div>
       <div class="showcase-banner reveal">
         <div class="sb-copy">
@@ -1484,6 +1484,27 @@
           <div class="proj-links">
             <a class="primary" href="https://skill-dna-vert.vercel.app/" target="_blank" rel="noopener">Open Website →</a>
             <a href="https://github.com/asmitsr/skill-dna" target="_blank" rel="noopener">Source Code ↗</a>
+          </div>
+        </article>
+
+        <article class="proj reveal tilt">
+          <div class="proj-top"><span class="proj-num">07</span><h3>Asmit MCP Server</h3><span class="proj-kind"><i class="dot"></i>PYTHON · OPEN SOURCE</span></div>
+          <p>A public Python MCP server that gives AI tools a URL-checking tool — with SSRF protection built in, so a fetch can't be redirected onto an internal address.</p>
+          <p class="note verified">✓ Version 0.1.0 — main branch CI green: 28 unit tests pass, ruff clean.</p>
+          <div class="tags"><span>Python</span><span>MCP</span><span>SSRF protection</span></div>
+          <details class="case">
+            <summary>Case study — problem, build &amp; outcome</summary>
+            <dl class="case-rows">
+              <div class="case-row"><dt>Problem</dt><dd>A tool that fetches URLs on request has to be careful about where those URLs actually lead — a link can redirect somewhere internal that was never meant to be reached.</dd></div>
+              <div class="case-row"><dt>Built</dt><dd>A public Python MCP server (version 0.1.0) that exposes a URL-checking tool, with SSRF protection built in: the IP is pinned and re-verified at every redirect step, so a fetch can't be steered to an internal address.</dd></div>
+              <div class="case-row"><dt>Outcome</dt><dd>Public on GitHub at version 0.1.0 — main branch CI green, with 28 unit tests passing and ruff clean.</dd></div>
+              <div class="case-row"><dt>Why this stack</dt><dd>Python — the server's job is small and focused: take a URL check, guard the fetch, report back. Python keeps that job direct, and the project is held to a checked standard — 28 unit tests and ruff, both green in CI on the main branch.</dd></div>
+              <div class="case-row"><dt>Hard part</dt><dd>SSRF protection that survives redirects: checking an address once is not enough, because a URL can redirect — and each redirect can point somewhere new. The IP is pinned and verified again at every redirect step, so the check holds all the way through the fetch, not just at the start.</dd></div>
+              <div class="case-row"><dt>Trade-off</dt><dd>Pinning and re-verifying the IP at every redirect step is stricter than a single check up front — the protection wins over the shortcut: safety on every hop, even when it means more checking per fetch.</dd></div>
+            </dl>
+          </details>
+          <div class="proj-links">
+            <a class="primary" href="https://github.com/asmitsr/asmit-mcp-server" target="_blank" rel="noopener">Source Code ↗</a>
           </div>
         </article>
 
@@ -2301,7 +2322,7 @@
       print("Available commands:");
       print("  about     — who is Asmit?");
       print("  skills    — the stack, with levels");
-      print("  projects  — the six featured projects");
+      print("  projects  — the seven featured projects");
       print("  contact   — where to find me");
       print("  hire      — working with me");
       print("  github    — open my GitHub");
@@ -2323,6 +2344,7 @@
       print("4. SUST OR DIE — Android study app · Kotlin (debug APK download)");
       print("5. IELTS Pathway — live · Next.js · BN/EN Band 7 plan");
       print("6. Skill DNA — GitHub skill analyzer");
+      print("7. Asmit MCP Server — Python MCP server · SSRF protection");
       print("Scroll to the Projects section for links.", "dim");
     },
     contact: function(){
@@ -2356,6 +2378,8 @@
     "the stack": "skills",
     "the six featured projects": "projects",
     "six featured projects": "projects",
+    "the seven featured projects": "projects",
+    "seven featured projects": "projects",
     "where to find me": "contact",
     "working with me": "hire",
     "open my github": "github",
