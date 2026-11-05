@@ -709,21 +709,23 @@
   .term-bar span{font-family:var(--font-mono);font-size:12.5px;color:var(--muted);margin-left:6px}
   .term-body{
     font-family:var(--font-mono);font-size:14px;line-height:1.75;
-    padding:18px;height:340px;overflow-y:auto;cursor:text;
+    padding:18px;height:340px;overflow-y:auto;overflow-x:hidden;cursor:text;
+    min-width:0;overflow-wrap:anywhere;
   }
-  .term-body .ln{white-space:pre-wrap;word-break:break-word}
+  .term-body .ln{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;max-width:100%}
+  .term-body a{overflow-wrap:anywhere}
   .term-body .prompt{color:var(--accent)}
   .term-body .dim{color:var(--faint)}
   .term-body .hl{color:var(--accent-soft)}
   .term-body a{color:var(--accent-soft)}
-  .term-form{display:flex;gap:8px;align-items:center;border-top:1px solid var(--line);padding:12px 16px;background:rgba(255,255,255,.02);transition:box-shadow .25s ease,background-color .25s ease}
+  .term-form{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-top:1px solid var(--line);padding:12px 16px;background:rgba(255,255,255,.02);transition:box-shadow .25s ease,background-color .25s ease}
   /* the input row is the one interactive strip of the terminal — when it
      holds keyboard focus the whole row lights up, so focus is unmistakable
      even though the bare input itself carries no outline */
   .term-form:focus-within{box-shadow:inset 0 0 0 1.5px var(--accent);background:var(--accent-dim)}
   .term-form label{font-family:var(--font-mono);font-size:14px;color:var(--accent);white-space:nowrap}
   .term-form input{
-    flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--text);
+    flex:1 1 264px;min-width:0;background:transparent;border:0;outline:0;color:var(--text);
     font-family:var(--font-mono);font-size:14px;caret-color:var(--accent);
   }
   .term-form input:focus-visible{outline:none}
@@ -832,9 +834,12 @@
   }
   .cert-toolbar button:hover{border-color:var(--accent)}
   .cert-zoom-label{font-family:var(--font-mono);font-size:13px;color:var(--muted);min-width:52px;text-align:center}
-  .cert-stage{position:relative;border:1px solid var(--line);border-radius:12px;background:var(--bg2);overflow:hidden;touch-action:none;min-height:280px}
-  .cert-canvas{position:relative;transform-origin:0 0;will-change:transform}
-  .cert-canvas img{display:block;width:100%;height:auto;-webkit-user-drag:none;pointer-events:none}
+  /* zoom is width-based: JS sets the image width in px and the stage
+     scrolls natively around it — no transforms and no pan maths, so the
+     picture can never drift, double up or leave the frame */
+  .cert-stage{position:relative;border:1px solid var(--line);border-radius:12px;background:var(--bg2);overflow:auto;max-height:68vh;min-height:200px}
+  .cert-canvas{position:relative;width:max-content;max-width:none;margin:0 auto;overflow:hidden}
+  .cert-canvas img{display:block;width:auto;max-width:none;height:auto;-webkit-user-drag:none;pointer-events:none}
   .cert-watermark{position:absolute;inset:-40%;pointer-events:none;overflow:hidden;opacity:.07;transform:rotate(-24deg);font-family:var(--font-mono);font-size:15px;line-height:3.2;color:var(--text);white-space:nowrap}
   .cert-shield{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;background:var(--overlay);z-index:5;padding:20px;cursor:pointer}
   .cert-modal.shielded .cert-shield{display:flex}
@@ -944,6 +949,9 @@
     /* 16px inputs stop mobile browsers auto-zooming on focus, and the
        quick-command chips get a comfortable touch height */
     .term-form input{font-size:16px}
+    /* the placeholder is set a touch smaller than the typed text so the
+       whole hint stays visible on the input's own line at phone widths */
+    .term-form input::placeholder{font-size:14px}
     .term-chips button{padding:9px 14px}
     .mf-field input,.mf-field textarea{font-size:16px}
     .palette-btn .pb-text{display:none}
@@ -2249,6 +2257,22 @@
     date: function(){ print(new Date().toString()); },
     clear: function(){ if(termBody) termBody.innerHTML = ""; }
   };
+  /* the descriptions shown by `help` work as commands too: typing the
+     question a command answers runs that command. Matching is
+     case-insensitive and ignores extra spaces and a trailing "?",
+     exactly like the who is asmit / whoami handling below. */
+  var PHRASES = {
+    "who is asmit": "about",
+    "whoami": "about",
+    "the stack, with levels": "skills",
+    "the stack": "skills",
+    "the six featured projects": "projects",
+    "six featured projects": "projects",
+    "where to find me": "contact",
+    "working with me": "hire",
+    "open my github": "github",
+    "clear the terminal": "clear"
+  };
   function runCommand(raw){
     var cmd = (raw || "").trim();
     bootStarted = true; bootCancelled = true;
@@ -2257,7 +2281,7 @@
     history.unshift(cmd); histIdx = -1;
     var key = cmd.toLowerCase().split(/\s+/)[0];
     var phrase = cmd.toLowerCase().replace(/\s+/g, " ").replace(/\?+$/, "").trim();
-    if(phrase === "who is asmit" || phrase === "whoami"){ COMMANDS.about(); }
+    if(PHRASES[phrase]){ COMMANDS[PHRASES[phrase]](); }
     else if(COMMANDS[key]){ COMMANDS[key](); }
     else { print("command not found: " + key + " — type 'help' for the list.", "dim"); }
   }
@@ -2534,28 +2558,37 @@
   var closeBtn = document.getElementById("cert-close");
   document.getElementById("cert-watermark").textContent = "ASMIT SARKAR · CERTIFICATE · ".repeat(40);
   var lastRow = null;
-  var scale = 1, tx = 0, ty = 0, fitScale = 1;
+  /* zoom state is just the displayed image width in px. Zooming changes
+     that width; moving around a zoomed image is the stage's own native
+     scroll. There is deliberately no transform and no pan offset. */
+  var zoomW = 0, fitW = 0;
 
-  function apply(){
-    canvas.style.transform = "translate(" + tx + "px, " + ty + "px) scale(" + scale + ")";
-    label.textContent = Math.abs(scale - fitScale) < 0.001 ? "Fit" : Math.round(scale / fitScale * 100) + "%";
+  function computeFitW(){
+    var nw = img.naturalWidth, nh = img.naturalHeight;
+    if(!nw || !nh || !stage.clientWidth) return 0;
+    var maxH = Math.round(window.innerHeight * 0.68);
+    return Math.max(1, Math.floor(Math.min(stage.clientWidth, nw, maxH * nw / nh)));
   }
-  function computeFit(){
-    var r = stage.getBoundingClientRect();
-    var iw = img.naturalWidth || r.width, ih = img.naturalHeight || r.width * 0.73;
-    fitScale = Math.min(r.width / iw, (window.innerHeight * 0.6) / ih, 1);
-    if(!(fitScale > 0)) fitScale = 1;
-    stage.style.height = Math.max(280, Math.round(ih * fitScale)) + "px";
+  function applyZoom(){
+    if(!zoomW) return;
+    img.style.width = zoomW + "px";
+    var nw = img.naturalWidth;
+    label.textContent = (!nw || zoomW === fitW) ? "Fit" : Math.round(zoomW / nw * 100) + "%";
   }
-  function fit(){ computeFit(); scale = fitScale; tx = 0; ty = 0; apply(); }
-  function set100(){ scale = 1; tx = 0; ty = 0; apply(); }
-  function zoomTo(ns, cx, cy){
-    ns = Math.min(4, Math.max(0.2, ns));
-    var r = stage.getBoundingClientRect();
-    var px = (cx == null ? r.width / 2 : cx - r.left), py = (cy == null ? r.height / 2 : cy - r.top);
-    var k = ns / scale;
-    tx = px - (px - tx) * k; ty = py - (py - ty) * k; scale = ns; apply();
+  function fitZoom(){
+    var w = computeFitW();
+    if(!w) return;
+    fitW = w; zoomW = w; applyZoom();
+    stage.scrollLeft = 0; stage.scrollTop = 0;
   }
+  function setZoomW(w){
+    var nw = img.naturalWidth;
+    if(!nw || !zoomW) return;
+    zoomW = Math.round(Math.min(Math.max(w, Math.min(80, nw)), nw * 3));
+    applyZoom();
+  }
+  function zoomBy(f){ setZoomW(zoomW * f); }
+  function zoom100(){ setZoomW(img.naturalWidth); }
   function shield(){ if(modal.classList.contains("open")) modal.classList.add("shielded"); }
   function unshield(){ modal.classList.remove("shielded"); }
 
@@ -2588,7 +2621,9 @@
       switchEl.appendChild(b);
     });
     unshield();
-    if(img.complete && img.naturalWidth) fit();
+    zoomW = 0; fitW = 0; img.style.width = "";
+    stage.scrollLeft = 0; stage.scrollTop = 0;
+    if(img.complete && img.naturalWidth) fitZoom();
   }
   function openCert(key, row){
     lastRow = row || null;
@@ -2613,36 +2648,15 @@
   }
   if(closeBtn) closeBtn.addEventListener("click", closeCert);
   modal.addEventListener("click", function(e){ if(e.target === modal) closeCert(); });
-  document.getElementById("cert-zoom-in").addEventListener("click", function(){ zoomTo(scale * 1.4); });
-  document.getElementById("cert-zoom-out").addEventListener("click", function(){ zoomTo(scale / 1.4); });
-  document.getElementById("cert-zoom-fit").addEventListener("click", fit);
-  document.getElementById("cert-zoom-100").addEventListener("click", set100);
-  img.addEventListener("load", function(){ if(modal.classList.contains("open")) fit(); });
-  stage.addEventListener("wheel", function(e){ e.preventDefault(); zoomTo(scale * (e.deltaY < 0 ? 1.15 : 1 / 1.15), e.clientX, e.clientY); }, { passive:false });
-  stage.addEventListener("dblclick", function(){ if(Math.abs(scale - 1) < 0.01) fit(); else set100(); });
-
-  var pointers = new Map(), lastPinch = 0;
-  stage.addEventListener("pointerdown", function(e){
-    pointers.set(e.pointerId, { x:e.clientX, y:e.clientY });
-    try{ stage.setPointerCapture(e.pointerId); }catch(err){}
-  });
-  stage.addEventListener("pointermove", function(e){
-    if(!pointers.has(e.pointerId)) return;
-    var prev = pointers.get(e.pointerId);
-    pointers.set(e.pointerId, { x:e.clientX, y:e.clientY });
-    if(pointers.size === 1){ tx += e.clientX - prev.x; ty += e.clientY - prev.y; apply(); }
-    else if(pointers.size === 2){
-      var pts = Array.from(pointers.values());
-      var d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
-      if(lastPinch) zoomTo(scale * d / lastPinch);
-      lastPinch = d;
-    }
-  });
-  function endPointer(e){ pointers.delete(e.pointerId); if(pointers.size < 2) lastPinch = 0; }
-  stage.addEventListener("pointerup", endPointer);
-  stage.addEventListener("pointercancel", endPointer);
+  document.getElementById("cert-zoom-in").addEventListener("click", function(){ zoomBy(1.4); });
+  document.getElementById("cert-zoom-out").addEventListener("click", function(){ zoomBy(1 / 1.4); });
+  document.getElementById("cert-zoom-fit").addEventListener("click", fitZoom);
+  document.getElementById("cert-zoom-100").addEventListener("click", zoom100);
+  img.addEventListener("load", function(){ if(modal.classList.contains("open")) fitZoom(); });
+  stage.addEventListener("wheel", function(e){ e.preventDefault(); zoomBy(e.deltaY < 0 ? 1.15 : 1 / 1.15); }, { passive:false });
+  stage.addEventListener("dblclick", function(){ if(zoomW && zoomW === fitW) zoom100(); else fitZoom(); });
   window.addEventListener("resize", function(){
-    if(modal.classList.contains("open") && Math.abs(scale - fitScale) < 0.001) fit();
+    if(modal.classList.contains("open") && zoomW && zoomW === fitW) fitZoom();
   });
 
   /* copy protections, active only while the viewer is open */
