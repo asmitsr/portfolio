@@ -1195,8 +1195,12 @@
     .hero-plus.p1{left:9%;top:120px}
   }
   @media (max-width:620px){
-    .bp-label{display:none}
-    .bp-bar{width:54px}
+    /* the layer counter stays visible on phones too — it sits where the
+       seconds used to be. On phones the JS drops the "29 agents ·" prefix
+       and shows just "done / total layers", which fits in full here —
+       no ellipsis ever cuts the counts */
+    .bp-label{display:block;font-size:11px;max-width:46vw;flex:1 1 auto;min-width:0}
+    .bp-bar{width:36px}
     .bp-speeds button{padding:6px 7px}
     .bp-btn{padding:7px 11px}
     .build-pill{gap:8px;padding-left:12px;bottom:12px}
@@ -1204,7 +1208,7 @@
   /* the floating build pill must stay inside a 320px screen too */
   @media (max-width:480px){
     .build-pill{gap:6px;padding:7px 7px 7px 10px;max-width:97vw}
-    .bp-bar{width:38px}
+    .bp-bar{width:30px}
     .bp-pct{display:none}
     .bp-speeds button{padding:5px 6px;font-size:11px}
     .bp-btn{padding:6px 9px;font-size:11.5px}
@@ -2061,6 +2065,14 @@
     currentLabel = t;
     if(bpLabel) bpLabel.textContent = paused ? "Paused — tap Resume" : t;
   }
+  /* the pill's layer counter: full "29 agents · done / total layers" on
+     wide screens; on phones (≤620px) the agents prefix is dropped so the
+     done / total counts always fit in full — never cut off by ellipsis */
+  var phoneMQ = window.matchMedia ? window.matchMedia("(max-width: 620px)") : null;
+  function layerLabel(done, total){
+    var counts = done + " / " + total + " layers";
+    return (phoneMQ && phoneMQ.matches) ? counts : "29 agents · " + counts;
+  }
   function syncPause(){
     if(bpPause) bpPause.textContent = paused ? "Resume" : "Pause";
     if(bpLabel && building) bpLabel.textContent = paused ? "Paused — tap Resume" : currentLabel;
@@ -2511,7 +2523,7 @@
       updateGuides(dt);
       while(evIdx < events.length && events[evIdx].t <= vt){ events[evIdx].fn(); evIdx++; }
       updateTyping();
-      var counts = "29 agents · " + Math.min(layersDone, layerTotal) + " / " + layerTotal + " layers";
+      var counts = layerLabel(Math.min(layersDone, layerTotal), layerTotal);
       if(counts !== currentLabel) setPillLabel(counts);
       var sy = window.scrollY, i, a, p;
       for(i = 0; i < agents.length; i++){
@@ -2554,7 +2566,7 @@
     vt = 0; realMs = 0; lastTs = null;
     guidesReady = false;
     buildSchedule();
-    setPillLabel("29 agents · 0 / " + layerTotal + " layers");
+    setPillLabel(layerLabel(0, layerTotal));
     showAgents(true);
     if(!rafRunning){ rafRunning = true; requestAnimationFrame(tick); }
   }
@@ -2578,9 +2590,19 @@
     layersDone = layerTotal;
     pillUI("done");
     /* like the reference pill: agents and layers only — no seconds shown,
-       not even when the build is finished */
-    setPillLabel("29 agents · " + layerTotal + " / " + layerTotal + " layers");
+       not even when the build is finished; on phones just the counts, so
+       "302 / 302 layers" is fully readable with nothing cut off */
+    setPillLabel(layerLabel(layerTotal, layerTotal));
     startReveals();
+  }
+
+  /* crossing the phone breakpoint (rotate / resize) re-renders the counter
+     in the form that fits the new width, so the counts never end up cut */
+  if(phoneMQ && phoneMQ.addEventListener){
+    phoneMQ.addEventListener("change", function(){
+      if(buildDone) setPillLabel(layerLabel(layerTotal, layerTotal));
+      else if(building) setPillLabel(layerLabel(Math.min(layersDone, layerTotal), layerTotal));
+    });
   }
 
   /* ---- pill controls ---- */
