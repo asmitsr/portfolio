@@ -227,27 +227,30 @@
   body.building .bd.pending{opacity:.14}
   .bd > *{transition:opacity .45s var(--ease)}
   .bd.wire{
-    outline:2px dashed rgba(53,68,90,.95);outline-offset:3px;border-radius:6px;
-    background:rgba(32,47,70,.14)!important;border-color:rgba(53,68,90,.65)!important;
+    outline:1.5px solid rgba(88,166,255,.9);outline-offset:2px;border-radius:6px;
+    background:rgba(88,166,255,.07)!important;border-color:rgba(88,166,255,.55)!important;
     box-shadow:none!important;color:transparent!important;
   }
-  .bd.wire > *{opacity:.16!important}
+  .bd.wire > *{opacity:.14!important}
+  /* a block holding a photo is drawn as the classic crossed wireframe
+     placeholder — two blue diagonals spanning the frame — until its
+     agent reaches it and the photo fills in */
+  .bd.wire.wire-x{
+    background-image:
+      linear-gradient(to bottom right,transparent calc(50% - 1px),rgba(88,166,255,.5) calc(50% - 1px),rgba(88,166,255,.5) calc(50% + 1px),transparent calc(50% + 1px)),
+      linear-gradient(to top right,transparent calc(50% - 1px),rgba(88,166,255,.5) calc(50% - 1px),rgba(88,166,255,.5) calc(50% + 1px),transparent calc(50% + 1px))!important;
+  }
   .bd.pop{animation:buildPop .5s var(--ease)}
   @keyframes buildPop{0%{transform:scale(.985)}55%{transform:scale(1.004)}100%{transform:scale(1)}}
   .fill-img{transition:opacity .9s var(--ease),transform .9s var(--ease)}
   body.building .fill-img:not(.filled){opacity:0;transform:translateY(22px) scale(1.02)}
 
+  /* tiny colourful arrow cursors only — no name tags */
   .agent-cursor{
-    position:fixed;left:0;top:0;z-index:300;width:24px;height:24px;pointer-events:none;
+    position:fixed;left:0;top:0;z-index:300;width:14px;height:14px;pointer-events:none;
     opacity:0;transition:opacity .3s ease;will-change:transform;
   }
-  .agent-cursor svg{display:block;filter:drop-shadow(0 3px 5px rgba(0,0,0,.55))}
-  .agent-cursor .tag{
-    position:absolute;left:15px;top:16px;background:var(--panel2);color:var(--text);
-    font-family:var(--font-mono);font-size:10px;line-height:1;padding:3px 7px;
-    border-radius:3px 9px 9px 9px;white-space:nowrap;letter-spacing:.04em;
-  }
-  .agent-cursor.c2 .tag{background:var(--accent);color:var(--on-accent)}
+  .agent-cursor svg{display:block;filter:drop-shadow(0 2px 3px rgba(0,0,0,.55))}
 
   .build-pill{
     position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom, 0px));transform:translateX(-50%);z-index:250;
@@ -270,6 +273,8 @@
   .bp-bar{width:104px;height:5px;border-radius:99px;background:var(--sheen-strong);overflow:hidden;flex:none}
   .bp-bar i{display:block;height:100%;width:100%;background:var(--accent);border-radius:99px;transform:scaleX(0);transform-origin:left center;transition:transform .35s var(--ease)}
   .bp-pct{flex:none;min-width:34px}
+  .bp-time{flex:none;min-width:40px}
+  body.building .bp-bar i{transition:none}
   .bp-speeds{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;flex:none}
   .bp-speeds button{
     appearance:none;border:0;background:transparent;color:var(--muted);cursor:pointer;
@@ -1149,6 +1154,7 @@
   <span class="bp-label" id="bp-label">Building · Hero</span>
   <span class="bp-bar" aria-hidden="true"><i id="bp-fill"></i></span>
   <span class="bp-pct" id="bp-pct">0%</span>
+  <span class="bp-time" id="bp-time">0.0s</span>
   <span class="bp-speeds" id="bp-speeds" role="group" aria-label="Build speed">
     <button type="button" data-speed="1" aria-pressed="true">1×</button>
     <button type="button" data-speed="2" aria-pressed="false">2×</button>
@@ -1156,7 +1162,8 @@
   </span>
   <button class="bp-btn" type="button" id="bp-pause">Pause</button>
   <button class="bp-btn primary" type="button" id="bp-skip">Skip</button>
-  <button class="bp-btn primary" type="button" id="bp-replay" hidden>↻ Replay build</button>
+  <button class="bp-btn primary" type="button" id="bp-golive" hidden>Go live</button>
+  <button class="bp-btn" type="button" id="bp-replay" hidden>↻ Replay</button>
   <button class="bp-x" type="button" id="bp-close" aria-label="Dismiss build controls" hidden>×</button>
 </div>
 
@@ -1893,9 +1900,11 @@
   var bpLabel = document.getElementById("bp-label");
   var bpFill = document.getElementById("bp-fill");
   var bpPct = document.getElementById("bp-pct");
+  var bpTime = document.getElementById("bp-time");
   var bpPause = document.getElementById("bp-pause");
   var bpSkip = document.getElementById("bp-skip");
   var bpReplay = document.getElementById("bp-replay");
+  var bpGoLive = document.getElementById("bp-golive");
   var bpClose = document.getElementById("bp-close");
   var bpSpeeds = document.getElementById("bp-speeds");
 
@@ -1906,6 +1915,9 @@
 
   /* mark every block the agent will "build", and every line it will type */
   q(".hero-word,#cutout-wrap,.hello,.hero-role,.hero-sub,.hero-ctas,.hero-stats,.marquee,.sec-head,.about-copy,.about-stats,.code-card,.skill-group,.proj,.arch,.wf-words,.wf-step,.term,.term-chips,.contact-box,.ccard,.msg-form,.ach-list,.ach-row").forEach(function(el){ el.classList.add("bd"); });
+  /* a block holding a photo is drawn as a crossed wireframe placeholder
+     while the build runs — the X stands where the image will fill in */
+  q(".bd").forEach(function(el){ if(el.querySelector(".fill-img")) el.classList.add("wire-x"); });
   var h1El = document.getElementById("hero-h1");
   if(h1El){ h1El.classList.add("bd"); h1El.setAttribute("data-type", ""); }
   q(".sec-head h2").forEach(function(h){ h.setAttribute("data-type", ""); });
@@ -1945,6 +1957,7 @@
     if(bpSpeeds) bpSpeeds.style.display = done ? "none" : "";
     if(bpPause) bpPause.style.display = done ? "none" : "";
     if(bpSkip) bpSkip.style.display = done ? "none" : "";
+    if(bpGoLive){ bpGoLive.hidden = !done; bpGoLive.style.display = done ? "" : "none"; }
     if(bpReplay){ bpReplay.hidden = !done; bpReplay.style.display = done ? "" : "none"; }
     if(bpClose){ bpClose.hidden = !done; bpClose.style.display = done ? "" : "none"; }
     if(done && bpLabel) bpLabel.textContent = "Build complete ✓";
@@ -1967,89 +1980,93 @@
     });
   }
 
-  /* ---- agent cursors ---- */
-  function makeCursor(cls, label, color){
-    var d = document.createElement("div");
-    d.className = "agent-cursor " + cls;
-    d.setAttribute("aria-hidden", "true");
-    d.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24"><path d="M4 2 L21 11 L13.2 13 L16.5 21 L13.2 22.3 L10.2 14.6 L5.8 18.6 Z" fill="' + color + '" stroke="#fff" stroke-width="1.4"/></svg><span class="tag">' + label + "</span>";
-    document.body.appendChild(d);
-    return { el: d, x: -80, y: -80 };
-  }
-  var cur1 = null, cur2 = null;
-  function moveCursor(c, x, y, dur){
-    if(!c) return Promise.resolve();
-    var from = "translate(" + c.x + "px," + c.y + "px)";
-    var to = "translate(" + x + "px," + y + "px)";
-    c.x = x; c.y = y;
-    if(c.el.animate){
-      try {
-        var a = c.el.animate([{ transform: from }, { transform: to }], { duration: Math.max(dur / speed, 1), easing: "cubic-bezier(.45,.05,.35,1)", fill: "forwards" });
-        if(a && a.finished && a.finished.then) return a.finished.catch(function(){});
-      } catch(e){ /* fall through */ }
+  /* ---- 29 parallel agents on one virtual clock ----
+     vt = virtual build time (ms). It advances by dt*speed every animation
+     frame, so cursor motion and the progress bar are continuous — nothing
+     stalls at 0% and nothing jumps to 100%. Every agent move, block
+     reveal, typing pass and scroll is placed on the vt timeline when the
+     build starts, then a single tick() plays all 29 agents in parallel. */
+  var TOTAL_MS = 42000;
+  var AGENT_COLORS = ["#4da3ff","#3ddc84","#ff5c8a","#ffd23f","#b388ff","#a1887f","#ff8a5c","#4dd0e1","#aeea00","#ff6e6e","#7c9eff","#69f0ae","#ff80bf","#ffe082","#ea80fc","#cfd8dc","#ffab40","#40c4ff","#b2ff59","#ff4081","#ffd740","#8c9eff","#a7ffeb","#ff9e80","#82b1ff","#ccff90","#f48fb1","#fff59d","#ce93d8"];
+  var agents = [];
+  var vt = 0, realMs = 0, lastTs = null, rafRunning = false;
+  /* layer counter for the pill — every block reveal, typing pass, photo
+     fill and hero letter is one "layer" the swarm completes */
+  var layersDone = 0, layerTotal = 0;
+  var seed = 7;
+  function rnd(){ seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+  function makeAgents(){
+    if(agents.length) return;
+    for(var i = 0; i < AGENT_COLORS.length; i++){
+      var color = AGENT_COLORS[i];
+      var d = document.createElement("div");
+      d.className = "agent-cursor";
+      d.setAttribute("aria-hidden", "true");
+      d.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24"><path d="M4 2 L21 11 L13.2 13 L16.5 21 L13.2 22.3 L10.2 14.6 L5.8 18.6 Z" fill="' + color + '" stroke="#fff" stroke-width="1.6"/></svg>';
+      document.body.appendChild(d);
+      agents.push({ el: d, jobs: [], freeAt: 0, x: 0, y: 0, ex: 0, ey: 0 });
     }
-    c.el.style.transform = to;
-    return wait(dur);
   }
-  function showCursors(show){
-    [cur1, cur2].forEach(function(c){ if(c) c.el.style.opacity = show ? "1" : "0"; });
+  function easeIO(t){ return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
+  function posAt(a, t){
+    var jobs = a.jobs;
+    if(!jobs.length) return { x: a.x, y: a.y };
+    var px = jobs[0].x0, py = jobs[0].y0, i, j, f;
+    for(i = 0; i < jobs.length; i++){
+      j = jobs[i];
+      if(t < j.t0) break;
+      if(t <= j.t1){
+        f = j.t1 > j.t0 ? easeIO((t - j.t0) / (j.t1 - j.t0)) : 1;
+        return { x: j.x0 + (j.x1 - j.x0) * f, y: j.y0 + (j.y1 - j.y0) * f };
+      }
+      px = j.x1; py = j.y1;
+    }
+    return { x: px, y: py };
   }
-  function drawBox(c, rect, dur){
-    var x1 = Math.max(rect.left - 12, 6), y1 = Math.max(rect.top - 12, 72);
-    var x2 = Math.min(rect.right + 12, window.innerWidth - 32), y2 = Math.min(rect.bottom + 12, window.innerHeight - 32);
-    var seg = dur / 4;
-    return moveCursor(c, x1, y1, seg)
-      .then(function(){ return moveCursor(c, x2, y1, seg); })
-      .then(function(){ return moveCursor(c, x2, y2, seg); })
-      .then(function(){ return moveCursor(c, x1, y2, seg); })
-      .then(function(){ return moveCursor(c, x1, y1, seg * 0.6); });
+  /* queue a smooth glide for one agent (document coords); starts no
+     earlier than t and chains after that agent's already-queued work */
+  function scheduleMove(a, t, dur, x, y){
+    dur = Math.max(dur, 1);
+    var start = Math.max(t, a.freeAt);
+    var fx = a.jobs.length ? a.ex : a.x, fy = a.jobs.length ? a.ey : a.y;
+    a.jobs.push({ t0: start, t1: start + dur, x0: fx, y0: fy, x1: x, y1: y });
+    a.freeAt = start + dur; a.ex = x; a.ey = y;
+    return a.freeAt;
+  }
+  function travelDur(x0, y0, x1, y1){
+    var dx = x1 - x0, dy = y1 - y0;
+    return Math.min(950, Math.max(240, Math.sqrt(dx * dx + dy * dy) * 0.55));
+  }
+  function showAgents(show){
+    agents.forEach(function(a){ a.el.style.opacity = show ? "1" : "0"; });
   }
 
-  /* ---- typing ---- */
-  function typeInto(el, text){
+  /* ---- timeline events + typing plans (all in vt) ---- */
+  var events = [], evIdx = 0, typePlans = [];
+  function at(t, fn){ events.push({ t: t, fn: fn }); }
+  function renderType(p, frac){
+    var el = p.el;
+    var n = Math.max(0, Math.min(p.text.length, Math.ceil(frac * p.text.length)));
+    if(!p.h1){ el.textContent = p.text.slice(0, n); return; }
+    var pre = p.text.slice(0, 11), name = p.text.slice(11);
+    if(n <= pre.length){ el.textContent = pre.slice(0, n); return; }
     el.textContent = "";
-    var i = 0;
-    function step(){
-      if(aborted){ el.textContent = text; return Promise.resolve(); }
-      i += 2;
-      el.textContent = text.slice(0, i);
-      if(i >= text.length){ el.innerHTML = originalHTML(el); return Promise.resolve(); }
-      return wait(30).then(step);
-    }
-    return step();
+    el.appendChild(document.createTextNode(pre));
+    var span = document.createElement("span");
+    span.className = "name";
+    span.textContent = name.slice(0, n - pre.length);
+    el.appendChild(span);
   }
-  function typeH1(){
-    if(!h1El) return Promise.resolve();
-    var pre = "Hello, I’m ";
-    var name = "Asmit Sarkar";
-    h1El.textContent = "";
-    var node = document.createTextNode("");
-    h1El.appendChild(node);
-    var i = 0;
-    function finishH1(){ h1El.innerHTML = h1OrigHTML; }
-    function stepPre(){
-      if(aborted){ finishH1(); return Promise.resolve(); }
-      i += 1;
-      node.textContent = pre.slice(0, i);
-      if(i >= pre.length) return stepName();
-      return wait(34).then(stepPre);
+  function updateTyping(){
+    for(var i = 0; i < typePlans.length; i++){
+      var p = typePlans[i];
+      if(p.done || vt < p.t0) continue;
+      var frac = p.t1 > p.t0 ? (vt - p.t0) / (p.t1 - p.t0) : 1;
+      if(frac >= 1){ p.el.innerHTML = p.html; p.done = true; layersDone++; }
+      else renderType(p, frac);
     }
-    function stepName(){
-      var span = document.createElement("span");
-      span.className = "name";
-      h1El.appendChild(span);
-      var j = 0;
-      function s(){
-        if(aborted){ finishH1(); return Promise.resolve(); }
-        j += 1;
-        span.textContent = name.slice(0, j);
-        if(j >= name.length) return Promise.resolve();
-        return wait(40).then(s);
-      }
-      return s();
-    }
-    return stepPre();
   }
+
 
   /* ---- tour steps ---- */
   function blocksOf(root){
@@ -2070,95 +2087,166 @@
     { label: "Achievements", root: document.getElementById("achievements") },
     { label: "Contact", root: document.getElementById("contact") }
   ];
-  function scrollStepTo(step){
-    if(step.hero){ return smoothTo(0, 850); }
-    if(!step.root) return Promise.resolve();
-    var y = step.root.getBoundingClientRect().top + window.scrollY - 78;
-    return smoothTo(Math.max(y, 0), 1150);
+  /* steps overlap heavily: a new section starts every ~3.5s but builds
+     for ~9s, so several sections are under construction at the same
+     time, with cursors spread across the whole viewport — the last
+     section's window still closes just before the 42s mark */
+  var STEP_MS = [10000, 6000, 9000, 8500, 10000, 8000, 8000, 8500, 8000, 9500];
+  var STEP_GAP = 3500;
+  var scrollSegs = [];
+  function docRect(el){
+    var r = el.getBoundingClientRect();
+    return { left: r.left, right: r.right, top: r.top + window.scrollY, bottom: r.bottom + window.scrollY, width: r.width, height: r.height };
   }
-  function runStep(step, idx){
-    if(aborted || !step.root) return Promise.resolve();
-    setPillLabel("Building · " + step.label);
-    var blocks = blocksOf(step.root);
-    return scrollStepTo(step).then(function(){ return wait(220); }).then(function(){
-      if(aborted) return;
-      /* wireframe phase — steel-blue-grey dashed boxes, cursors draw the section */
-      blocks.forEach(function(b){ b.classList.remove("pending"); b.classList.add("wire"); });
-      var draw = drawBox(cur1, step.root.getBoundingClientRect(), step.hero ? 1000 : 820);
-      var inner = blocks.length > 2 ? blocks[1] : blocks[0];
-      var draw2 = inner ? drawBox(cur2, inner.getBoundingClientRect(), 720) : Promise.resolve();
-      return Promise.all([draw, draw2, wait(step.hero ? 1080 : 880)]);
-    }).then(function(){
-      if(aborted) return;
-      /* blocks materialise one by one */
-      var chain = Promise.resolve();
-      blocks.forEach(function(b){
-        chain = chain.then(function(){
-          if(aborted) return;
-          b.classList.remove("wire");
-          if(b.classList.contains("reveal")) b.classList.add("in");
-          if(!b.classList.contains("hero-word")) b.classList.add("pop");
-          return wait(blocks.length > 4 ? 110 : 70);
+  function buildSchedule(){
+    seed = 7; events = []; evIdx = 0; typePlans = []; scrollSegs = [];
+    layersDone = 0; layerTotal = 0;
+    agents.forEach(function(a){
+      a.jobs = []; a.freeAt = 0;
+      a.x = 30 + rnd() * Math.max(window.innerWidth - 90, 60);
+      a.y = 110 + rnd() * Math.min(window.innerHeight * 0.65, 540);
+      a.ex = a.x; a.ey = a.y;
+      a.el.style.transform = "translate(" + a.x + "px," + a.y + "px)";
+    });
+    var prevScroll = 0;
+    steps.forEach(function(step, si){
+      var dur = STEP_MS[si] || 3500;
+      var s0 = si * STEP_GAP, s1 = s0 + dur;
+      if(!step.root) return;
+      var sr = docRect(step.root);
+      var target = step.hero ? 0 : Math.max(sr.top - 78, 0);
+      scrollSegs.push({ t0: s0, t1: s0 + 1800, from: prevScroll, to: target });
+      prevScroll = target;
+      (function(){
+        var blocks = blocksOf(step.root);
+        layerTotal += blocks.length;
+        at(s0 + 60, function(){
+          blocks.forEach(function(b){ b.classList.remove("pending"); b.classList.add("wire"); });
         });
-      });
-      return chain;
-    }).then(function(){
-      if(aborted) return;
-      /* PORTFOLIO letters fill with colour, one by one */
-      if(step.hero){
-        var chain2 = Promise.resolve();
-        q(".hero-word .ltr").forEach(function(l){
-          chain2 = chain2.then(function(){
-            if(!aborted) l.classList.add("lit");
-            return wait(55);
+        var work0 = s0 + 750, work1 = s1 - 250;
+        var span = Math.max(work1 - work0, 400);
+        var revealOf = [];
+        /* one agent per block: glide in, work the block, the block lands */
+        blocks.forEach(function(b, bi){
+          var revealT = work0 + span * ((bi + 0.55) / Math.max(blocks.length, 1)) + (rnd() * 90 - 45);
+          revealOf.push({ el: b, t: revealT });
+          var br = docRect(b);
+          var bx = br.left + br.width * (0.25 + rnd() * 0.5);
+          var by = br.top + br.height * (0.3 + rnd() * 0.4);
+          var a = agents[bi % agents.length];
+          var td = travelDur(a.ex, a.ey, bx, by);
+          var arr = revealT - 300;
+          scheduleMove(a, arr - td, td, bx, by);
+          scheduleMove(a, arr, 150, bx + 14, by + 8);
+          scheduleMove(a, arr + 150, 150, bx - 6, by + 16);
+          at(revealT, function(){
+            layersDone++;
+            b.classList.remove("wire");
+            if(b.classList.contains("reveal")) b.classList.add("in");
+            if(!b.classList.contains("hero-word")) b.classList.add("pop");
           });
         });
-        return chain2;
-      }
-    }).then(function(){
-      if(aborted) return;
-      /* text types itself in */
-      var chain3 = Promise.resolve();
-      q("[data-type]", step.root).forEach(function(t){
-        chain3 = chain3.then(function(){
-          if(aborted) return;
-          var r = t.getBoundingClientRect();
-          moveCursor(cur2, Math.min(r.left + 10, window.innerWidth - 40), Math.max(r.top, 76), 240);
-          if(t === h1El) return typeH1();
-          return typeInto(t, originalText(t));
+        /* headings type themselves in, each with its own agent riding along */
+        q("[data-type]", step.root).forEach(function(el, ti){
+          var text = originalText(el);
+          var host = el.classList.contains("bd") ? el : (el.closest ? el.closest(".bd") : null);
+          var base = s0 + 600 + ti * 150;
+          for(var k = 0; k < revealOf.length; k++){ if(revealOf[k].el === host){ base = Math.max(base, revealOf[k].t + 120); break; } }
+          var durT = Math.min(Math.max(text.length * 42, 500), Math.max(s1 - base - 150, 350));
+          typePlans.push({ el: el, text: text, html: originalHTML(el), t0: base, t1: base + durT, h1: el === h1El, done: false });
+          layerTotal++;
+          var er = docRect(el);
+          var ex = Math.min(er.left + 12, window.innerWidth - 30), ey = er.top + 6;
+          var a = agents[(blocks.length + ti) % agents.length];
+          var td = travelDur(a.ex, a.ey, ex, ey);
+          scheduleMove(a, base - td, td, ex, ey);
+          scheduleMove(a, base, durT, ex + Math.min(er.width * 0.8, 260), ey + er.height * 0.5);
         });
-      });
-      return chain3;
-    }).then(function(){
-      if(aborted) return;
-      /* photos fill in top-to-bottom */
-      var fills = q(".fill-img", step.root);
-      if(fills.length){
-        var r = fills[0].getBoundingClientRect();
-        moveCursor(cur2, r.left + r.width * 0.5, Math.max(r.top + r.height * 0.35, 76), 320);
-        fills.forEach(function(f){ f.classList.add("filled"); });
-        return wait(980);
+        /* photos fill in when their agent reaches them */
+        q(".fill-img", step.root).forEach(function(f, fi){
+          layerTotal++;
+          var ft = work0 + span * (0.25 + 0.65 * rnd());
+          at(ft, function(){ layersDone++; f.classList.add("filled"); });
+          var fr = docRect(f);
+          var fx = fr.left + fr.width * 0.5, fy = fr.top + fr.height * 0.35;
+          var a = agents[(blocks.length + 3 + fi) % agents.length];
+          var td = travelDur(a.ex, a.ey, fx, fy);
+          scheduleMove(a, ft - td, td, fx, fy);
+        });
+        /* PORTFOLIO letters light up one by one */
+        if(step.hero){
+          q(".hero-word .ltr").forEach(function(l, li){
+            layerTotal++;
+            at(s0 + 900 + li * 130, function(){ layersDone++; l.classList.add("lit"); });
+          });
+        }
+        /* agents not mid-task keep working the section — roaming waypoints
+           across the visible band, so the whole section stays busy in
+           parallel until the next section starts. Roaming is capped early
+           in each window so agents stay free to reach the next section's
+           blocks on time now that the windows overlap. */
+        var bandTop = target + 40, bandBot = target + window.innerHeight - 70;
+        agents.forEach(function(a){
+          var guard = 0;
+          while(a.freeAt < Math.min(s1 - 550, s0 + 3200) && guard < 24){
+            guard++;
+            var wx = 24 + rnd() * Math.max(window.innerWidth - 70, 60);
+            var wy = bandTop + rnd() * Math.max(bandBot - bandTop, 60);
+            scheduleMove(a, a.freeAt + 50, travelDur(a.ex, a.ey, wx, wy), wx, wy);
+          }
+        });
+      })();
+    });
+    events.sort(function(x, y){ return x.t - y.t; });
+  }
+  function applyScroll(){
+    var y = window.scrollY;
+    for(var i = 0; i < scrollSegs.length; i++){
+      var s = scrollSegs[i];
+      if(vt < s.t0) break;
+      y = vt <= s.t1 ? s.from + (s.to - s.from) * easeIO((vt - s.t0) / (s.t1 - s.t0)) : s.to;
+    }
+    if(Math.abs(y - window.scrollY) > 0.5) window.scrollTo(0, y);
+  }
+  function tick(ts){
+    if(!building){ rafRunning = false; return; }
+    if(lastTs === null) lastTs = ts;
+    var dt = Math.min(ts - lastTs, 100);
+    lastTs = ts;
+    if(!paused){
+      vt += dt * speed;
+      realMs += dt;
+      applyScroll();
+      while(evIdx < events.length && events[evIdx].t <= vt){ events[evIdx].fn(); evIdx++; }
+      updateTyping();
+      var counts = "29 agents · " + Math.min(layersDone, layerTotal) + " / " + layerTotal + " layers";
+      if(counts !== currentLabel) setPillLabel(counts);
+      var sy = window.scrollY, i, a, p;
+      for(i = 0; i < agents.length; i++){
+        a = agents[i]; p = posAt(a, vt);
+        a.el.style.transform = "translate(" + p.x.toFixed(1) + "px," + (p.y - sy).toFixed(1) + "px)";
       }
-    }).then(function(){
-      if(!aborted) setProgress(Math.round(((idx + 1) / steps.length) * 100));
-    });
+      var f = Math.min(vt / TOTAL_MS, 1);
+      if(bpFill) bpFill.style.transform = "scaleX(" + f + ")";
+      if(bpPct) bpPct.textContent = Math.floor(f * 100) + "%";
+      if(bpTime) bpTime.textContent = (realMs / 1000).toFixed(1) + "s";
+      if(vt >= TOTAL_MS){ rafRunning = false; finishBuild(); return; }
+    }
+    requestAnimationFrame(tick);
   }
-  function runTour(){
-    var chain = Promise.resolve();
-    steps.forEach(function(step, idx){
-      chain = chain.then(function(){ return runStep(step, idx); });
-    });
-    return chain.then(function(){ if(!aborted) finishBuild(); });
-  }
+
 
   function startBuild(){
     aborted = false; paused = false; building = true; buildDone = false;
     document.documentElement.classList.remove("prebuild");
     document.body.classList.add("building");
     document.body.classList.remove("built");
+    /* wireframe-first: the whole page skeleton — every section and panel
+       as a blue wireframe box — is drawn up front; content then fills in
+       section by section as the swarm works through it in parallel */
     q(".bd").forEach(function(b){
-      b.classList.add("pending");
-      b.classList.remove("wire", "pop");
+      b.classList.remove("pending", "pop");
+      b.classList.add("wire");
       if(b.classList.contains("reveal")) b.classList.remove("in");
     });
     q(".fill-img").forEach(function(f){ f.classList.remove("filled"); });
@@ -2168,17 +2256,17 @@
     pillUI("building");
     syncPause();
     setProgress(0);
-    setPillLabel("Building · Hero");
+    if(bpTime) bpTime.textContent = "0.0s";
+    setPillLabel("29 agents building");
     window.scrollTo({ top: 0, behavior: "auto" });
-    if(!cur1){
-      cur1 = makeCursor("c1", "agent", "#35445A");
-      cur2 = makeCursor("c2", "agent-2", "#D9BE78");
-    }
-    cur1.x = window.innerWidth * 0.3; cur1.y = 150;
-    cur2.x = window.innerWidth * 0.6; cur2.y = 220;
-    showCursors(true);
-    runTour();
+    makeAgents();
+    vt = 0; realMs = 0; lastTs = null;
+    buildSchedule();
+    setPillLabel("29 agents · 0 / " + layerTotal + " layers");
+    showAgents(true);
+    if(!rafRunning){ rafRunning = true; requestAnimationFrame(tick); }
   }
+
   function finishBuild(){
     if(buildDone) return;
     aborted = true; building = false; buildDone = true;
@@ -2192,27 +2280,22 @@
     q(".fill-img").forEach(function(f){ f.classList.add("filled"); });
     q(".hero-word .ltr").forEach(function(l){ l.classList.add("lit"); });
     restoreTexts();
-    showCursors(false);
+    showAgents(false);
     setProgress(100);
+    if(bpTime) bpTime.textContent = (realMs / 1000).toFixed(1) + "s";
     pillUI("done");
+    /* honest numbers: the real agent count and the real elapsed time */
+    if(bpLabel) bpLabel.textContent = "Rebuilt by 29 agents in " + (realMs / 1000).toFixed(1) + "s";
     startReveals();
-    /* the pill must not float over the finished page: show "Build complete"
-       briefly, then fade it away for good (Replay lives in the footer and
-       in the Ctrl+K palette) */
-    if(pill){
-      setTimeout(function(){
-        if(!buildDone || building || !pill) return;
-        pill.classList.add("bp-fade");
-        setTimeout(function(){
-          if(buildDone && !building && pill){ pill.hidden = true; pill.classList.remove("bp-fade"); }
-        }, 420);
-      }, 2000);
-    }
   }
 
   /* ---- pill controls ---- */
   if(bpSkip) bpSkip.addEventListener("click", finishBuild);
   if(bpReplay) bpReplay.addEventListener("click", function(){ startBuild(); });
+  if(bpGoLive) bpGoLive.addEventListener("click", function(){
+    if(pill) pill.hidden = true;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
   if(bpClose) bpClose.addEventListener("click", function(){ if(pill) pill.hidden = true; });
   if(bpPause) bpPause.addEventListener("click", function(){
     if(!building) return;
