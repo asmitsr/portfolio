@@ -2095,21 +2095,30 @@
     { label: "Achievements", root: document.getElementById("achievements") },
     { label: "Contact", root: document.getElementById("contact") }
   ];
-  /* steps overlap heavily and evenly: every section gets the exact same
-     9s build window, and a new section starts every 2.1s, so several
-     sections are under construction at the same time with cursors spread
-     across the whole viewport. No section — Contact included — gets more
-     time than any other: the last window closes at 27.9s, inside the
-     30s total. */
-  var STEP_MS = [9000, 9000, 9000, 9000, 9000, 9000, 9000, 9000, 9000, 9000];
-  var STEP_GAP = 2100;
-  var scrollSegs = [];
+  /* Sections take turns, evenly: each of the 10 sections gets an equal
+     3s slot of the 30s tour (10 × 3s = 30s — no section, Contact
+     included, gets more than any other). The camera glides in, the
+     section builds IN VIEW over the first ~2s of its slot, then the
+     finished section is held on screen and shown for the rest of the
+     slot before one smooth 700ms glide carries the view to the next
+     section — the same build → show → move-on rhythm as the reference
+     videos, instead of the camera racing ahead while sections finish
+     off-screen. Contact's slot is the last one: it arrives at 26.95s,
+     is fully built by ~29.25s and is held in view until the tour ends
+     at 30s. */
+  var STEP_MS = [3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000];
+  var STEP_GAP = 3000;
+  /* camera path keyframes: an arrival point and a hold-until point per
+     section (see scrollPathY) — the view is perfectly still while a
+     section is shown, and moves only during the short eased glides
+     between hold-until and the next arrival */
+  var scrollKeys = [];
   function docRect(el){
     var r = el.getBoundingClientRect();
     return { left: r.left, right: r.right, top: r.top + window.scrollY, bottom: r.bottom + window.scrollY, width: r.width, height: r.height };
   }
   function buildSchedule(){
-    seed = 7; events = []; evIdx = 0; typePlans = []; scrollSegs = [];
+    seed = 7; events = []; evIdx = 0; typePlans = []; scrollKeys = [];
     layersDone = 0; layerTotal = 0;
     agents.forEach(function(a){
       a.jobs = []; a.freeAt = 0;
@@ -2118,22 +2127,31 @@
       a.ex = a.x; a.ey = a.y;
       a.el.style.transform = "translate(" + a.x + "px," + a.y + "px)";
     });
-    var prevScroll = 0;
     steps.forEach(function(step, si){
       var dur = STEP_MS[si] || 3500;
       var s0 = si * STEP_GAP, s1 = s0 + dur;
       if(!step.root) return;
       var sr = docRect(step.root);
       var target = step.hero ? 0 : Math.max(sr.top - 78, 0);
-      scrollSegs.push({ t0: s0, t1: s0 + 1800, from: prevScroll, to: target });
-      prevScroll = target;
+      /* never aim past the bottom the page can actually scroll to, so
+         the final glide into Contact eases into the real end of the
+         page instead of chasing a point it can never reach */
+      target = Math.min(target, Math.max(document.documentElement.scrollHeight - window.innerHeight, 0));
+      /* arrive just before the section's slot starts building, then
+         hold the finished section in view until 2250ms into its slot —
+         the glide to the next section fills the remaining ~700ms */
+      scrollKeys.push({ t: Math.max(s0 - 50, 0), y: target });
+      scrollKeys.push({ t: s0 + 2250, y: target });
       (function(){
         var blocks = blocksOf(step.root);
         layerTotal += blocks.length;
         at(s0 + 60, function(){
           blocks.forEach(function(b){ b.classList.remove("pending"); b.classList.add("wire"); });
         });
-        var work0 = s0 + 750, work1 = s1 - 250;
+        /* all of the section's building lands inside the first ~2s of
+           its slot, while the camera is parked on it; the final second
+           of the slot is pure show time on the finished section */
+        var work0 = s0 + 300, work1 = s0 + 1950;
         var span = Math.max(work1 - work0, 400);
         var revealOf = [];
         /* one agent per block: glide in, work the block, the block lands */
@@ -2163,9 +2181,11 @@
         q("[data-type]", step.root).forEach(function(el, ti){
           var text = originalText(el);
           var host = el.classList.contains("bd") ? el : (el.closest ? el.closest(".bd") : null);
-          var base = s0 + 600 + ti * 150;
+          var base = s0 + 280 + ti * 120;
           for(var k = 0; k < revealOf.length; k++){ if(revealOf[k].el === host){ base = Math.max(base, revealOf[k].t + 120); break; } }
-          var durT = Math.min(Math.max(text.length * 42, 500), Math.max(s1 - base - 150, 350));
+          /* typing always completes before the camera glides away at
+             s0 + 2250, so no heading is left half-typed on screen */
+          var durT = Math.min(Math.max(text.length * 42, 500), Math.max(s0 + 2250 - base, 280));
           typePlans.push({ el: el, text: text, html: originalHTML(el), t0: base, t1: base + durT, h1: el === h1El, done: false });
           layerTotal++;
           var er = docRect(el);
@@ -2190,18 +2210,18 @@
         if(step.hero){
           q(".hero-word .ltr").forEach(function(l, li){
             layerTotal++;
-            at(s0 + 900 + li * 130, function(){ layersDone++; l.classList.add("lit"); });
+            at(s0 + 450 + li * 110, function(){ layersDone++; l.classList.add("lit"); });
           });
         }
         /* agents not mid-task keep working the section — roaming waypoints
-           across the visible band, so the whole section stays busy in
-           parallel until the next section starts. Roaming is capped early
-           in each window so agents stay free to reach the next section's
-           blocks on time now that the windows overlap. */
+           across the visible band while the section builds and is shown.
+           Roaming winds down as the build completes (s1 - 1150) so the
+           agents are free to drift ahead to the next section during the
+           show hold and be in place when its slot starts. */
         var bandTop = target + 40, bandBot = target + window.innerHeight - 70;
         agents.forEach(function(a){
           var guard = 0;
-          while(a.freeAt < Math.min(s1 - 550, s0 + 3200) && guard < 24){
+          while(a.freeAt < Math.min(s1 - 1150, s0 + 2400) && guard < 24){
             guard++;
             var wx = 24 + rnd() * Math.max(window.innerWidth - 70, 60);
             var wy = bandTop + rnd() * Math.max(bandBot - bandTop, 60);
@@ -2212,22 +2232,47 @@
     });
     events.sort(function(x, y){ return x.t - y.t; });
   }
-  function applyScroll(){
-    var y = window.scrollY;
-    for(var i = 0; i < scrollSegs.length; i++){
-      var s = scrollSegs[i];
-      if(vt < s.t0) break;
-      y = vt <= s.t1 ? s.from + (s.to - s.from) * easeIO((vt - s.t0) / (s.t1 - s.t0)) : s.to;
+  /* The camera path is a pure function of virtual time, so it is
+     identical at any frame rate or playback speed and freezes exactly
+     when the tour is paused. Between a section's arrival keyframe and
+     its hold-until keyframe the two y values are equal, so the view is
+     perfectly still while that section builds and then sits finished
+     on screen; between hold-until and the next arrival it eases across
+     with a smootherstep whose slope is zero at both ends — one gentle
+     700ms glide, no lurch at departure, no bump at arrival, and never
+     a scroll past a section and back. The final keyframes park the
+     view on Contact from 26.95s to the end of the tour. */
+  function scrollPathY(t){
+    var ks = scrollKeys;
+    if(!ks.length) return 0;
+    if(t <= ks[0].t) return ks[0].y;
+    for(var i = 1; i < ks.length; i++){
+      if(t <= ks[i].t){
+        var a = ks[i - 1], b = ks[i];
+        if(b.y === a.y || b.t <= a.t) return b.y;
+        var u = (t - a.t) / (b.t - a.t);
+        var s = u * u * u * (u * (u * 6 - 15) + 10);
+        return a.y + (b.y - a.y) * s;
+      }
     }
+    return ks[ks.length - 1].y;
+  }
+  function applyScroll(){
+    var y = scrollPathY(vt);
     if(Math.abs(y - window.scrollY) > 0.5) window.scrollTo(0, y);
   }
   function tick(ts){
     if(!building){ rafRunning = false; return; }
     if(lastTs === null) lastTs = ts;
-    var dt = Math.min(ts - lastTs, 100);
+    /* clamp at 200ms, not less: on a slow device (a TV browser under
+       10fps) a tighter clamp makes the virtual clock fall behind real
+       time, stretching the whole tour — and the trip to Contact — well
+       past the 30s the pill claims */
+    var dt = Math.min(ts - lastTs, 200);
     lastTs = ts;
     if(!paused){
-      vt += dt * speed;
+      var vdt = dt * speed;
+      vt += vdt;
       realMs += dt;
       applyScroll();
       while(evIdx < events.length && events[evIdx].t <= vt){ events[evIdx].fn(); evIdx++; }
