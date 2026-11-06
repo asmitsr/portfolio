@@ -318,7 +318,6 @@
   .bp-bar{width:104px;height:5px;border-radius:99px;background:var(--sheen-strong);overflow:hidden;flex:none}
   .bp-bar i{display:block;height:100%;width:100%;background:var(--accent);border-radius:99px;transform:scaleX(0);transform-origin:left center;transition:transform .35s var(--ease)}
   .bp-pct{flex:none;min-width:34px}
-  .bp-time{flex:none;min-width:40px}
   body.building .bp-bar i{transition:none}
   .bp-speeds{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;flex:none}
   .bp-speeds button{
@@ -1211,7 +1210,6 @@
   <span class="bp-label" id="bp-label">Building · Hero</span>
   <span class="bp-bar" aria-hidden="true"><i id="bp-fill"></i></span>
   <span class="bp-pct" id="bp-pct">0%</span>
-  <span class="bp-time" id="bp-time">0.0s</span>
   <span class="bp-speeds" id="bp-speeds" role="group" aria-label="Build speed">
     <button type="button" data-speed="1" aria-pressed="true">1×</button>
     <button type="button" data-speed="2" aria-pressed="false">2×</button>
@@ -1986,7 +1984,6 @@
   var bpLabel = document.getElementById("bp-label");
   var bpFill = document.getElementById("bp-fill");
   var bpPct = document.getElementById("bp-pct");
-  var bpTime = document.getElementById("bp-time");
   var bpPause = document.getElementById("bp-pause");
   var bpSkip = document.getElementById("bp-skip");
   var bpReplay = document.getElementById("bp-replay");
@@ -2449,7 +2446,6 @@
       var f = Math.min(vt / TOTAL_MS, 1);
       if(bpFill) bpFill.style.transform = "scaleX(" + f + ")";
       if(bpPct) bpPct.textContent = Math.floor(f * 100) + "%";
-      if(bpTime) bpTime.textContent = (realMs / 1000).toFixed(1) + "s";
       if(vt >= TOTAL_MS){ rafRunning = false; finishBuild(); return; }
     }
     requestAnimationFrame(tick);
@@ -2476,7 +2472,6 @@
     pillUI("building");
     syncPause();
     setProgress(0);
-    if(bpTime) bpTime.textContent = "0.0s";
     setPillLabel("29 agents building");
     window.scrollTo({ top: 0, behavior: "auto" });
     makeAgents();
@@ -2503,10 +2498,11 @@
     restoreTexts();
     showAgents(false);
     setProgress(100);
-    if(bpTime) bpTime.textContent = (realMs / 1000).toFixed(1) + "s";
+    layersDone = layerTotal;
     pillUI("done");
-    /* honest numbers: the real agent count and the real elapsed time */
-    if(bpLabel) bpLabel.textContent = "Rebuilt by 29 agents in " + (realMs / 1000).toFixed(1) + "s";
+    /* like the reference pill: agents and layers only — no seconds shown,
+       not even when the build is finished */
+    setPillLabel("29 agents · " + layerTotal + " / " + layerTotal + " layers");
     startReveals();
   }
 
