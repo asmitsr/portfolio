@@ -1989,7 +1989,7 @@
      stalls at 0% and nothing jumps to 100%. Every agent move, block
      reveal, typing pass and scroll is placed on the vt timeline when the
      build starts, then a single tick() plays all 29 agents in parallel. */
-  var TOTAL_MS = 42000;
+  var TOTAL_MS = 30000;
   var AGENT_COLORS = ["#4da3ff","#3ddc84","#ff5c8a","#ffd23f","#b388ff","#a1887f","#ff8a5c","#4dd0e1","#aeea00","#ff6e6e","#7c9eff","#69f0ae","#ff80bf","#ffe082","#ea80fc","#cfd8dc","#ffab40","#40c4ff","#b2ff59","#ff4081","#ffd740","#8c9eff","#a7ffeb","#ff9e80","#82b1ff","#ccff90","#f48fb1","#fff59d","#ce93d8"];
   var agents = [];
   var vt = 0, realMs = 0, lastTs = null, rafRunning = false;
@@ -2095,12 +2095,14 @@
     { label: "Achievements", root: document.getElementById("achievements") },
     { label: "Contact", root: document.getElementById("contact") }
   ];
-  /* steps overlap heavily: a new section starts every ~3.5s but builds
-     for ~9s, so several sections are under construction at the same
-     time, with cursors spread across the whole viewport — the last
-     section's window still closes just before the 42s mark */
-  var STEP_MS = [10000, 6000, 9000, 8500, 10000, 8000, 8000, 8500, 8000, 9500];
-  var STEP_GAP = 3500;
+  /* steps overlap heavily and evenly: every section gets the exact same
+     9s build window, and a new section starts every 2.1s, so several
+     sections are under construction at the same time with cursors spread
+     across the whole viewport. No section — Contact included — gets more
+     time than any other: the last window closes at 27.9s, inside the
+     30s total. */
+  var STEP_MS = [9000, 9000, 9000, 9000, 9000, 9000, 9000, 9000, 9000, 9000];
+  var STEP_GAP = 2100;
   var scrollSegs = [];
   function docRect(el){
     var r = el.getBoundingClientRect();
