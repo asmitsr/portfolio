@@ -275,6 +275,28 @@
   }
   .agent-cursor svg{display:block;filter:drop-shadow(0 2px 3px rgba(0,0,0,.55))}
 
+  /* ================= build guides — red crosshair + blue guide lines =================
+     While the tour runs, a drafting-style overlay rides over the page,
+     exactly like the reference build videos: one red crosshair (a
+     vertical and a horizontal line spanning the whole screen) tracks
+     the block the swarm is working on, and thin blue guide lines run
+     full-screen through the active section's edges, with a blue
+     outline and small square handles marking the section frame.
+     The overlay is a look only — it never intercepts a tap, carries no
+     content, and fades in/out with the build. */
+  #build-guides{
+    position:fixed;inset:0;z-index:240;pointer-events:none;
+    opacity:0;transition:opacity .55s ease;
+  }
+  body.building #build-guides{opacity:1}
+  #build-guides svg{display:block;width:100%;height:100%}
+  #build-guides .g-red-glow{stroke:#ff3830;stroke-width:5;opacity:.10}
+  #build-guides .g-red{stroke:#ff3830;stroke-width:1.5;opacity:.92}
+  #build-guides .g-red-dot{fill:none;stroke:#ff3830;stroke-width:1.5;opacity:.95}
+  #build-guides .g-blue{stroke:#2f7cf6;stroke-width:1;opacity:.75}
+  #build-guides .g-blue-rect{fill:rgba(47,124,246,.045);stroke:#2f7cf6;stroke-width:1.25;opacity:.9}
+  #build-guides .g-handle{fill:#fff;stroke:#2f7cf6;stroke-width:1.25}
+
   .build-pill{
     position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom, 0px));transform:translateX(-50%);z-index:250;
     display:flex;align-items:center;gap:11px;max-width:96vw;
@@ -1201,6 +1223,26 @@
   <button class="bp-btn" type="button" id="bp-replay" hidden>↻ Replay</button>
   <button class="bp-x" type="button" id="bp-close" aria-label="Dismiss build controls" hidden>×</button>
 </div>
+
+<!-- build guides overlay — red crosshair + blue guide lines, shown only while the tour builds -->
+<div id="build-guides" aria-hidden="true"><svg id="guides-svg" preserveAspectRatio="none">
+  <line class="g-blue" id="g-bvl" x1="0" y1="0" x2="0" y2="0"/>
+  <line class="g-blue" id="g-bvr" x1="0" y1="0" x2="0" y2="0"/>
+  <line class="g-blue" id="g-bht" x1="0" y1="0" x2="0" y2="0"/>
+  <line class="g-blue" id="g-bhb" x1="0" y1="0" x2="0" y2="0"/>
+  <rect class="g-blue-rect" id="g-brect" x="0" y="0" width="0" height="0"/>
+  <rect class="g-handle" id="g-h1" x="-4" y="-4" width="7" height="7"/>
+  <rect class="g-handle" id="g-h2" x="-4" y="-4" width="7" height="7"/>
+  <rect class="g-handle" id="g-h3" x="-4" y="-4" width="7" height="7"/>
+  <rect class="g-handle" id="g-h4" x="-4" y="-4" width="7" height="7"/>
+  <line class="g-red-glow" id="g-rvglow" x1="0" y1="0" x2="0" y2="0"/>
+  <line class="g-red-glow" id="g-rhglow" x1="0" y1="0" x2="0" y2="0"/>
+  <line class="g-red" id="g-rv" x1="0" y1="0" x2="0" y2="0"/>
+  <line class="g-red" id="g-rh" x1="0" y1="0" x2="0" y2="0"/>
+  <circle class="g-red-dot" id="g-rc" cx="0" cy="0" r="4"/>
+  <line class="g-red" id="g-rt1" x1="0" y1="0" x2="0" y2="0"/>
+  <line class="g-red" id="g-rt2" x1="0" y1="0" x2="0" y2="0"/>
+</svg></div>
 
 <!-- ================= NAV ================= -->
 <header class="nav">
@@ -2154,12 +2196,24 @@
      section is shown, and moves only during the short eased glides
      between hold-until and the next arrival */
   var scrollKeys = [];
+  /* guide overlay state — focusKeys mark where the swarm's work lands
+     (the red crosshair's target, document coords, vt-ordered) and
+     guideKeys mark each section's frame (the blue guide lines' target).
+     Displayed positions are lerped toward their targets every frame, so
+     both line systems glide instead of snapping — the premium, smooth
+     feel of the reference videos. */
+  var focusKeys = [], guideKeys = [];
+  var guidesReady = false;
+  var gCur = { fx: 0, fy: 0, l: 0, r: 0, t: 0, b: 0 };
+  var gEl = {};
+  ["g-bvl","g-bvr","g-bht","g-bhb","g-brect","g-h1","g-h2","g-h3","g-h4","g-rvglow","g-rhglow","g-rv","g-rh","g-rc","g-rt1","g-rt2"].forEach(function(id){ gEl[id] = document.getElementById(id); });
   function docRect(el){
     var r = el.getBoundingClientRect();
     return { left: r.left, right: r.right, top: r.top + window.scrollY, bottom: r.bottom + window.scrollY, width: r.width, height: r.height };
   }
   function buildSchedule(){
     seed = 7; events = []; evIdx = 0; typePlans = []; scrollKeys = [];
+    focusKeys = []; guideKeys = [];
     layersDone = 0; layerTotal = 0;
     agents.forEach(function(a){
       a.jobs = []; a.freeAt = 0;
@@ -2183,6 +2237,8 @@
          the glide to the next section fills the remaining ~700ms */
       scrollKeys.push({ t: Math.max(s0 - 50, 0), y: target });
       scrollKeys.push({ t: s0 + 2250, y: target });
+      /* the blue guide frame for this section, active from its arrival */
+      guideKeys.push({ t: Math.max(s0 - 50, 0), l: sr.left, r: sr.right, tp: sr.top, bt: sr.bottom });
       (function(){
         var blocks = blocksOf(step.root);
         layerTotal += blocks.length;
@@ -2202,6 +2258,8 @@
           var br = docRect(b);
           var bx = br.left + br.width * (0.25 + rnd() * 0.5);
           var by = br.top + br.height * (0.3 + rnd() * 0.4);
+          /* the red crosshair settles on each block as it lands */
+          focusKeys.push({ t: revealT, x: bx, y: by });
           var a = agents[bi % agents.length];
           /* this block's wireframe lines are drawn in its own agent's
              colour — green agent draws green, pink draws pink, … */
@@ -2272,6 +2330,7 @@
       })();
     });
     events.sort(function(x, y){ return x.t - y.t; });
+    focusKeys.sort(function(x, y){ return x.t - y.t; });
   }
   /* The camera path is a pure function of virtual time, so it is
      identical at any frame rate or playback speed and freezes exactly
@@ -2302,6 +2361,67 @@
     var y = scrollPathY(vt);
     if(Math.abs(y - window.scrollY) > 0.5) window.scrollTo(0, y);
   }
+  /* the crosshair's target at vt: the most recent block the swarm has
+     landed (before the first one, the first block to come) */
+  function focusAt(t){
+    var fk = focusKeys;
+    if(!fk.length) return null;
+    var cur = fk[0];
+    for(var i = 0; i < fk.length; i++){ if(fk[i].t <= t) cur = fk[i]; else break; }
+    return cur;
+  }
+  /* the blue guide frame at vt: the section whose slot is running */
+  function guideAt(t){
+    var gk = guideKeys;
+    if(!gk.length) return null;
+    var cur = gk[0];
+    for(var i = 0; i < gk.length; i++){ if(gk[i].t <= t) cur = gk[i]; else break; }
+    return cur;
+  }
+  function gSet(el, attrs){
+    if(!el) return;
+    for(var k in attrs) el.setAttribute(k, attrs[k]);
+  }
+  /* one frame of the guide overlay: ease the displayed crosshair and
+     section frame toward their targets with exponential smoothing
+     (frame-rate independent), then write the SVG geometry in viewport
+     coords. The crosshair eases a touch slower than the guides, so it
+     trails the work softly, premium-style, and never snaps. */
+  function updateGuides(dt){
+    var f = focusAt(vt), g = guideAt(vt);
+    if(!f || !g) return;
+    var sy = window.scrollY;
+    var tx = f.x, ty = f.y - sy;
+    var tl = g.l, tr = g.r, tt = g.tp - sy, tb = g.bt - sy;
+    if(!guidesReady){
+      gCur.fx = tx; gCur.fy = ty; gCur.l = tl; gCur.r = tr; gCur.t = tt; gCur.b = tb;
+      guidesReady = true;
+    } else {
+      var kf = 1 - Math.exp(-dt / 110), kg = 1 - Math.exp(-dt / 70);
+      gCur.fx += (tx - gCur.fx) * kf; gCur.fy += (ty - gCur.fy) * kf;
+      gCur.l += (tl - gCur.l) * kg; gCur.r += (tr - gCur.r) * kg;
+      gCur.t += (tt - gCur.t) * kg; gCur.b += (tb - gCur.b) * kg;
+    }
+    var W = window.innerWidth, H = window.innerHeight;
+    var fx = gCur.fx.toFixed(1), fy = gCur.fy.toFixed(1);
+    var l = gCur.l.toFixed(1), r = gCur.r.toFixed(1), tp = gCur.t.toFixed(1), bt = gCur.b.toFixed(1);
+    gSet(gEl["g-rv"], { x1: fx, y1: 0, x2: fx, y2: H });
+    gSet(gEl["g-rvglow"], { x1: fx, y1: 0, x2: fx, y2: H });
+    gSet(gEl["g-rh"], { x1: 0, y1: fy, x2: W, y2: fy });
+    gSet(gEl["g-rhglow"], { x1: 0, y1: fy, x2: W, y2: fy });
+    gSet(gEl["g-rc"], { cx: fx, cy: fy });
+    gSet(gEl["g-rt1"], { x1: (gCur.fx - 11).toFixed(1), y1: fy, x2: (gCur.fx - 6).toFixed(1), y2: fy });
+    gSet(gEl["g-rt2"], { x1: (gCur.fx + 6).toFixed(1), y1: fy, x2: (gCur.fx + 11).toFixed(1), y2: fy });
+    gSet(gEl["g-bvl"], { x1: l, y1: 0, x2: l, y2: H });
+    gSet(gEl["g-bvr"], { x1: r, y1: 0, x2: r, y2: H });
+    gSet(gEl["g-bht"], { x1: 0, y1: tp, x2: W, y2: tp });
+    gSet(gEl["g-bhb"], { x1: 0, y1: bt, x2: W, y2: bt });
+    gSet(gEl["g-brect"], { x: l, y: tp, width: Math.max(gCur.r - gCur.l, 0).toFixed(1), height: Math.max(gCur.b - gCur.t, 0).toFixed(1) });
+    gSet(gEl["g-h1"], { x: (gCur.l - 4).toFixed(1), y: (gCur.t - 4).toFixed(1) });
+    gSet(gEl["g-h2"], { x: (gCur.r - 4).toFixed(1), y: (gCur.t - 4).toFixed(1) });
+    gSet(gEl["g-h3"], { x: (gCur.l - 4).toFixed(1), y: (gCur.b - 4).toFixed(1) });
+    gSet(gEl["g-h4"], { x: (gCur.r - 4).toFixed(1), y: (gCur.b - 4).toFixed(1) });
+  }
   function tick(ts){
     if(!building){ rafRunning = false; return; }
     if(lastTs === null) lastTs = ts;
@@ -2316,6 +2436,7 @@
       vt += vdt;
       realMs += dt;
       applyScroll();
+      updateGuides(dt);
       while(evIdx < events.length && events[evIdx].t <= vt){ events[evIdx].fn(); evIdx++; }
       updateTyping();
       var counts = "29 agents · " + Math.min(layersDone, layerTotal) + " / " + layerTotal + " layers";
@@ -2360,6 +2481,7 @@
     window.scrollTo({ top: 0, behavior: "auto" });
     makeAgents();
     vt = 0; realMs = 0; lastTs = null;
+    guidesReady = false;
     buildSchedule();
     setPillLabel("29 agents · 0 / " + layerTotal + " layers");
     showAgents(true);
