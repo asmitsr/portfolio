@@ -268,6 +268,20 @@
   }
   .bd.pop{animation:buildPop .5s var(--ease)}
   @keyframes buildPop{0%{transform:scale(.985)}55%{transform:scale(1.004)}100%{transform:scale(1)}}
+  /* build parts — every real element inside the blocks is its own
+     layer: each skill, each project-card piece (number, title, tags,
+     links), each stat, each form field, each nav item. While the build
+     runs an unbuilt part waits as a faint ghost; when its agent reaches it the
+     part lands with a soft rise and the same pop as a block, so a
+     section visibly fills in element by element instead of appearing
+     all at once. Only elements that truly exist are parts — nothing
+     decorative or duplicated is counted. */
+  body.building .bdp{transition:opacity .38s var(--ease),transform .38s var(--ease)}
+  /* unbuilt parts wait as faint ghosts at the same .14-style visibility
+     a wireframe block's children get — never fully invisible, so a
+     link or button that is still a layer-to-be stays tappable */
+  body.building .bdp:not(.pin){opacity:.16!important;transform:translateY(7px) scale(.985)}
+  body.building .bdp.pin{animation:buildPop .45s var(--ease)}
   .fill-img{transition:opacity .9s var(--ease),transform .9s var(--ease)}
   body.building .fill-img:not(.filled){opacity:0;transform:translateY(22px) scale(1.02)}
 
@@ -2004,6 +2018,21 @@
   /* a block holding a photo is drawn as a crossed wireframe placeholder
      while the build runs — the X stands where the image will fill in */
   q(".bd").forEach(function(el){ if(el.querySelector(".fill-img")) el.classList.add("wire-x"); });
+  /* build parts: every real element inside (and alongside) the blocks
+     becomes its own layer, so the presentation builds up element by
+     element the way the reference videos do — each skill, each piece
+     of a project card, each stat, each form field, each nav item.
+     ONLY elements that truly exist on the page are marked: no filler,
+     no duplicates (the hidden mobile menu, the marquee's repeated
+     words and the collapsed case-study rows are not layers). */
+  var PART_SEL = ".sec-head .sec-idx,.sec-head > p,.stat,.astat,.hero-ctas a,.about-copy > p,.fact-list li,.who-is h3,.who-is > p,.who-is .wl,.code-head,.code-card pre,.skill-group h3,.skill-group .g-sub,.skill,.sb-k,.sb-copy h3,.sb-sub,.showcase-banner .btn,.proj-top > *,.proj > p,.tags span,.case summary,.proj-links a,.arch-layer .l-sub,.arch-layer h3,.arch-layer li,.arch-note,.wf-word,.wf-caption,.wf-step .wn,.wf-step h3,.wf-step p,.term-bar,.term-form,.term-chips button,.ach-name,.ach-hint,.contact-eyebrow,.contact-intro,.ccard .ck,.ccard .cv,.msg-form h3,.mf-field,.mf-send,.mf-note,.nav .logo,.nav-links a,.nav .palette-btn,.nav .theme-btn,.nav .nav-gh,.nav .menu-btn,footer .foot-in > span:not(.spacer),footer .foot-in > a,footer .foot-in > button";
+  q(PART_SEL).forEach(function(el){ el.classList.add("bdp"); });
+  /* a part never swallows another layer: drop the mark from anything
+     that is itself a block, contains a block, or contains another
+     part (the leaf-most real element is the layer) */
+  q(".bdp").forEach(function(el){
+    if(el.classList.contains("bd") || el.querySelector(".bd") || el.querySelector(".bdp")) el.classList.remove("bdp");
+  });
   var h1El = document.getElementById("hero-h1");
   if(h1El){ h1El.classList.add("bd"); h1El.setAttribute("data-type", ""); }
   q(".sec-head h2").forEach(function(h){ h.setAttribute("data-type", ""); });
@@ -2076,8 +2105,11 @@
   var AGENT_COLORS = ["#4da3ff","#3ddc84","#ff5c8a","#ffd23f","#b388ff","#a1887f","#ff8a5c","#4dd0e1","#aeea00","#ff6e6e","#7c9eff","#69f0ae","#ff80bf","#ffe082","#ea80fc","#cfd8dc","#ffab40","#40c4ff","#b2ff59","#ff4081","#ffd740","#8c9eff","#a7ffeb","#ff9e80","#82b1ff","#ccff90","#f48fb1","#fff59d","#ce93d8"];
   var agents = [];
   var vt = 0, realMs = 0, lastTs = null, rafRunning = false;
-  /* layer counter for the pill — every block reveal, typing pass, photo
-     fill and hero letter is one "layer" the swarm completes */
+  /* layer counter for the pill — every block reveal, every part (each
+     real element inside the blocks: skills, stats, tags, form fields,
+     nav items…), every typing pass, photo fill and hero letter is one
+     "layer" the swarm completes; the total is counted from the page
+     itself at schedule time, never a made-up number */
   var layersDone = 0, layerTotal = 0;
   var seed = 7;
   function rnd(){ seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
@@ -2160,6 +2192,21 @@
     if(root.classList && root.classList.contains("bd")) b.unshift(root);
     return b;
   }
+  /* the step's parts: every .bdp inside its root, plus any real
+     elements that live outside the section but belong to its moment of
+     the tour (the nav builds with the Hero, the footer with Contact).
+     A part only counts when it is actually rendered — anything with
+     no layout box right now (a nav link hidden on a phone, the menu
+     button hidden on a desktop) is skipped, never padded in. */
+  function partsOf(step){
+    var list = q(".bdp", step.root);
+    if(step.extra) list = step.extra.concat(list);
+    return list.filter(function(el){
+      if(el.closest && el.closest(".case-rows")) return false;
+      if(el.getClientRects && !el.getClientRects().length) return false;
+      return true;
+    });
+  }
   var heroEl = document.querySelector(".hero");
   var steps = [
     { label: "Hero", root: heroEl, hero: true },
@@ -2173,6 +2220,12 @@
     { label: "Achievements", root: document.getElementById("achievements") },
     { label: "Contact", root: document.getElementById("contact") }
   ];
+  /* real elements outside the section roots that still belong to the
+     tour: the fixed nav (logo, section links, search, theme, GitHub)
+     is on screen while the Hero builds, and the footer closes the
+     page while Contact builds — each is a layer of that step */
+  steps[0].extra = q(".bdp", document.querySelector(".nav"));
+  steps[steps.length - 1].extra = q(".bdp", document.querySelector("footer"));
   /* Sections take turns, evenly: each of the 10 sections gets an equal
      3s slot of the 30s tour (10 × 3s = 30s — no section, Contact
      included, gets more than any other). The camera glides in, the
@@ -2236,7 +2289,8 @@
       guideKeys.push({ t: Math.max(s0 - 50, 0), l: sr.left, r: sr.right, tp: sr.top, bt: sr.bottom });
       (function(){
         var blocks = blocksOf(step.root);
-        layerTotal += blocks.length;
+        var parts = partsOf(step);
+        layerTotal += blocks.length + parts.length;
         at(s0 + 60, function(){
           blocks.forEach(function(b){ b.classList.remove("pending"); b.classList.add("wire"); });
         });
@@ -2246,30 +2300,53 @@
         var work0 = s0 + 300, work1 = s0 + 1950;
         var span = Math.max(work1 - work0, 400);
         var revealOf = [];
-        /* one agent per block: glide in, work the block, the block lands */
-        blocks.forEach(function(b, bi){
-          var revealT = work0 + span * ((bi + 0.55) / Math.max(blocks.length, 1)) + (rnd() * 90 - 45);
-          revealOf.push({ el: b, t: revealT });
-          var br = docRect(b);
+        /* blocks and parts form ONE job list in document order, so a
+           block's frame always lands just before the real elements
+           inside it fill in, one layer at a time — the section grows
+           element by element (frame, then title, text, tags, links…)
+           instead of appearing in a handful of big chunks. One agent
+           per job: glide in, work the layer, the layer lands. */
+        var jobs = [];
+        blocks.forEach(function(b){ jobs.push({ el: b, part: false }); });
+        parts.forEach(function(p){ jobs.push({ el: p, part: true }); });
+        jobs.sort(function(x, y){
+          var d = x.el.compareDocumentPosition(y.el);
+          if(d & Node.DOCUMENT_POSITION_FOLLOWING) return -1;
+          if(d & Node.DOCUMENT_POSITION_PRECEDING) return 1;
+          return 0;
+        });
+        jobs.forEach(function(job, ji){
+          var el = job.el;
+          var revealT = work0 + span * ((ji + 0.55) / Math.max(jobs.length, 1)) + (rnd() * 90 - 45);
+          if(!job.part) revealOf.push({ el: el, t: revealT });
+          var br = docRect(el);
           var bx = br.left + br.width * (0.25 + rnd() * 0.5);
           var by = br.top + br.height * (0.3 + rnd() * 0.4);
-          /* the red crosshair settles on each block as it lands */
+          /* the red crosshair settles on each layer as it lands */
           focusKeys.push({ t: revealT, x: bx, y: by });
-          var a = agents[bi % agents.length];
-          /* the block's wireframe lines are drawn by CSS in the
+          var a = agents[ji % agents.length];
+          /* the layer's wireframe lines are drawn by CSS in the
              theme's own accent (see .bd.wire) — the agent's colour
              lives only on its little arrow cursor */
           var td = travelDur(a.ex, a.ey, bx, by);
           var arr = revealT - 300;
           scheduleMove(a, arr - td, td, bx, by);
-          scheduleMove(a, arr, 150, bx + 14, by + 8);
-          scheduleMove(a, arr + 150, 150, bx - 6, by + 16);
-          at(revealT, function(){
-            layersDone++;
-            b.classList.remove("wire");
-            if(b.classList.contains("reveal")) b.classList.add("in");
-            if(!b.classList.contains("hero-word")) b.classList.add("pop");
-          });
+          if(job.part){
+            scheduleMove(a, arr, 110, bx + 10, by + 6);
+            at(revealT, function(){
+              layersDone++;
+              el.classList.add("pin");
+            });
+          } else {
+            scheduleMove(a, arr, 150, bx + 14, by + 8);
+            scheduleMove(a, arr + 150, 150, bx - 6, by + 16);
+            at(revealT, function(){
+              layersDone++;
+              el.classList.remove("wire");
+              if(el.classList.contains("reveal")) el.classList.add("in");
+              if(!el.classList.contains("hero-word")) el.classList.add("pop");
+            });
+          }
         });
         /* headings type themselves in, each with its own agent riding along */
         q("[data-type]", step.root).forEach(function(el, ti){
@@ -2465,6 +2542,7 @@
     });
     q(".fill-img").forEach(function(f){ f.classList.remove("filled"); });
     q(".hero-word .ltr").forEach(function(l){ l.classList.remove("lit"); });
+    q(".bdp").forEach(function(p){ p.classList.remove("pin"); });
     restoreTexts();
     if(pill){ pill.hidden = false; pill.classList.remove("bp-fade"); }
     pillUI("building");
@@ -2493,6 +2571,7 @@
     });
     q(".fill-img").forEach(function(f){ f.classList.add("filled"); });
     q(".hero-word .ltr").forEach(function(l){ l.classList.add("lit"); });
+    q(".bdp").forEach(function(p){ p.classList.add("pin"); });
     restoreTexts();
     showAgents(false);
     setProgress(100);
