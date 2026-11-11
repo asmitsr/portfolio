@@ -2,8 +2,8 @@
 
 Personal developer portfolio: Aspiring Full-Stack & Android Developer from Chattogram, Bangladesh.
 
-Live site deployed on Vercel as a plain static site (single `index.html`, no build step).
+Live site deployed on Vercel as a plain static site (`index.html`, `certificates.html` and `404.html`, no build step).
 
-- Portfolio: https://github.com/asmitsr/portfolio
+- Portfolio: https://asmitsr.vercel.app
 - Contact: asmitsr.official@gmail.com
 - GitHub: https://github.com/asmitsr
